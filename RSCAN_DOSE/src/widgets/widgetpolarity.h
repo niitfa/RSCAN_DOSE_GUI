@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QFont>
 #include <QPushButton>
-#include "MessageReceiver.h"
-#include "MessageTransmitter.h"
+
+// add tcp client class
 
 namespace Ui {
 class WidgetPolarity;
@@ -18,7 +18,6 @@ class WidgetPolarity : public QWidget
 public:
     explicit WidgetPolarity(QWidget *parent = nullptr);
     ~WidgetPolarity();
-    void registerConnectors(MessageReceiver*, MessageTransmitter*);
     void setPolarity(uint8_t);
     void enableWidget(bool);
 private slots:
@@ -39,8 +38,6 @@ private:
     QFont buttonsFont;
     uint8_t lastPolarity = 1;
     uint8_t lastEnabled = 0;
-    MessageReceiver* receiver = nullptr;
-    MessageTransmitter* transmitter = nullptr;
 };
 
 #endif // WIDGETPOLARITY_H

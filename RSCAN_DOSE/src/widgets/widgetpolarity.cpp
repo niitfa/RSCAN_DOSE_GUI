@@ -71,12 +71,6 @@ WidgetPolarity::~WidgetPolarity()
     delete ui;
 }
 
-void WidgetPolarity::registerConnectors(MessageReceiver* receiver, MessageTransmitter* transmitter)
-{
-    this->receiver = receiver;
-    this->transmitter = transmitter;
-}
-
 void WidgetPolarity::setEnabledStyle(QPushButton * button)
 {
     if(button)
@@ -175,20 +169,20 @@ void WidgetPolarity::setMinusButtonDisabled()
 
 void WidgetPolarity::on_pushButton_plus_clicked()
 {
-    if(transmitter)
+    /*if(transmitter)
     {
         transmitter->setPositiveVoltage();
         //setPolarity(0); // debug!!!!
-    }
+    } */
 }
 
 void WidgetPolarity::on_pushButton_minus_clicked()
 {
-    if(transmitter)
+    /*if(transmitter)
     {
         transmitter->setNegativeVoltage();
         //setPolarity(1); // debug!!!!
-    }
+    } */
 }
 
 void WidgetPolarity::setPolarity(uint8_t polarity)

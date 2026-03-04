@@ -121,17 +121,6 @@ WidgetActivity::~WidgetActivity()
     delete ui;
 }
 
-void WidgetActivity::setMeasuresCompleted(int val)
-{
-    ui->label_measuresNum->setText(QString::number(val));
-}
-
-void WidgetActivity::registerConnectors(MessageReceiver *receiver, MessageTransmitter *transmitter)
-{
-    this->receiver = receiver;
-    this->transmitter = transmitter;
-}
-
 void WidgetActivity::drawStartStateButton()
 {
     int startButtonIconSize = 16;
@@ -169,17 +158,17 @@ void WidgetActivity::drawCurrentStartButtonState()
 void WidgetActivity::on_pushButton_startMeasurement_clicked()
 {
     // start meas
-    if(this->transmitter)
+    /*if(this->transmitter)
     {
         int cycles = ui->lineEdit_measuresTask->text().toInt();
         transmitter->startMeasurement(cycles);
-    }
+    } */
 }
 
 void WidgetActivity::on_pushButton_resetMeasurement_clicked()
 {
-    if(this->transmitter)
+    /*if(this->transmitter)
     {
         transmitter->resetMeasurement();
-    }
+    }*/
 }

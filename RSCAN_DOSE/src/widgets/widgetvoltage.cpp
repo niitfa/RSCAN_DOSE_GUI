@@ -102,12 +102,6 @@ WidgetVoltage::~WidgetVoltage()
     delete ui;
 }
 
-void WidgetVoltage::registerConnectors(MessageReceiver *receiver, MessageTransmitter *transmitter)
-{
-    this->receiver = receiver;
-    this->transmitter = transmitter;
-}
-
 int WidgetVoltage::getInputVoltage()
 {
     return ui->lineEdit_voltageInput->text().toInt();
@@ -115,7 +109,7 @@ int WidgetVoltage::getInputVoltage()
 
 void WidgetVoltage::on_pushButton_changeVoltage_clicked()
 {
-    int maxVoltage = 500;
+    /*int maxVoltage = 500;
     int targetVoltage = ui->lineEdit_voltageInput->text().toInt();
     if(this->transmitter)
     {
@@ -132,5 +126,5 @@ void WidgetVoltage::on_pushButton_changeVoltage_clicked()
             // good value
             this->transmitter->setVoltageValue(static_cast<uint16_t>(targetVoltage));
         }
-    }
+    } */
 }

@@ -73,12 +73,6 @@ WidgetSensivity::~WidgetSensivity()
     delete ui;
 }
 
-void WidgetSensivity::registerConnectors(MessageReceiver * receiver, MessageTransmitter * transmitter)
-{
-    this->receiver = receiver;
-    this->transmitter = transmitter;
-}
-
 void WidgetSensivity::setSensivity(uint8_t sensivity)
 {
     if((sensivity != this->lastSensivity))
@@ -168,18 +162,18 @@ void WidgetSensivity::setHighButtonDisabled()
 
 void WidgetSensivity::on_pushButton_sensivityLow_clicked()
 {
-    if(transmitter)
+    /*if(transmitter)
     {
         transmitter->setBroadRange();
         //setSensivity(0); // debug!!!!
-    }
+    } */
 }
 
 void WidgetSensivity::on_pushButton_sensivityHigh_clicked()
 {
-    if(transmitter)
+    /* if(transmitter)
     {
         transmitter->setNarrowRange();
         //setSensivity(1); // debug!!!!
-    }
+    } */
 }
