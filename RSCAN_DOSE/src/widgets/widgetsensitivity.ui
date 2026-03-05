@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WidgetSensivity</class>
- <widget class="QWidget" name="WidgetSensivity">
+ <class>WidgetSensitivity</class>
+ <widget class="QWidget" name="WidgetSensitivity">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -82,7 +82,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QPushButton" name="pushButton_sensivityLow">
+              <widget class="QPushButton" name="pushButton_sensitivityLow">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -104,7 +104,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_sensivityHigh">
+              <widget class="QPushButton" name="pushButton_sensitivityHigh">
                <property name="minimumSize">
                 <size>
                  <width>0</width>

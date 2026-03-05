@@ -71,8 +71,18 @@ void TCPClient::stop()
 
 void TCPClient::setCPUs(std::vector<int> cpus)
 {
-	this->cpus = cpus;
-} 
+    this->cpus = cpus;
+}
+
+void TCPClient::setIP(std::string ip)
+{
+    this->ip = ip;
+}
+
+void TCPClient::setPort(uint16_t port)
+{
+    this->port = port;
+}
 
 void TCPClient::setVerbose(bool verbose)
 {
@@ -144,15 +154,15 @@ void TCPClient::loop()
 			this->socketState = TCPSocketState::Established;
 			if (verbose) 
 			{
-				std::cerr << "TCP client: " << getCurrentTimeStr() 
-					<< " connection established " << this->ip << ":" << this->port << std::endl;
+                std::cout << "TCP client: " << getCurrentTimeStr()
+                    << " connection established " << this->ip << ":" << this->port << std::endl;
 			}
 		}
 		else
 		{
 			if (verbose) 
 			{ 
-				std::cerr << "TCP client: " << getCurrentTimeStr() << " connection error. Retry...\n"; 
+                std::cout << "TCP client: " << getCurrentTimeStr() << " connection error. Retry...\n";
 			}
 			this->socketState = TCPSocketState::Closing;
 		}
@@ -162,7 +172,7 @@ void TCPClient::loop()
 		{
 			if (verbose)  
 			{ 
-				std::cerr << "TCP client: " << getCurrentTimeStr() << " connection lost.\n"; 
+                std::cout << "TCP client: " << getCurrentTimeStr() << " connection lost.\n";
 			}
 			this->socketState = TCPSocketState::Closing;
 			connected.store(false);
@@ -191,7 +201,7 @@ int TCPClient::openSocket()
 	if ( ( this->serverAddress.sin_addr.s_addr = inet_addr( this->ip.c_str() ) ) == INADDR_NONE ) { 
 		if(verbose) 
 		{ 
-			std::cerr << "TCP client: " << getCurrentTimeStr() << " invalid IP. Abort.\n"; 
+            std::cout << "TCP client: " << getCurrentTimeStr() << " invalid IP. Abort.\n";
 		}
 		this->stop();
 	}
@@ -199,8 +209,8 @@ int TCPClient::openSocket()
 	this->serverAddress.sin_port = htons( this->port );
 	if(verbose)
 	{ 
-		std::cerr << "TCP client: " << getCurrentTimeStr() 
-			<< " opening socket " << this->ip << ":" << this->port << std::endl;
+        std::cout << "TCP client: " << getCurrentTimeStr()
+            << " opening socket " << this->ip << ":" << this->port << std::endl;
 	}
     return socket( AF_INET, SOCK_STREAM, 0 );
 }
@@ -210,7 +220,7 @@ void TCPClient::closeSocket()
 	close( this->sockfd );
 	if(verbose)
 	{
-		std::cerr << "TCP client: " << getCurrentTimeStr() << " closing socket.\n\n";
+        std::cout << "TCP client: " << getCurrentTimeStr() << " closing socket.\n\n";
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }

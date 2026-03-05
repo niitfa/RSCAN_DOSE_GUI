@@ -28,14 +28,16 @@ CONFIG += c++11
 SOURCES += $$files("*.cpp", true)
 HEADERS += $$files("*.h", true)
 FORMS += $$files("*.ui", true)
-RESOURCES += icons.qrc
+RESOURCES += icons.qrc settings.qrc
 INCLUDEPATH += \
         src \
         src/util \
         src/widgets \
+        src/buttons \
         src/windows \
         src/graph \
-        src/client
+        src/client \
+        src/settings
 
 
 # Default rules for deployment.

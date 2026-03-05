@@ -51,9 +51,14 @@ class TCPClient
 public:
 	TCPClient(std::string ip, uint16_t port, uint32_t rx_size, uint32_t tx_size);
 	virtual ~TCPClient();
-	void setVerbose(bool verbose);
-	void setCPUs(std::vector<int> cpus);
 
+    // setup
+    void setVerbose(bool verbose);
+    void setCPUs(std::vector<int> cpus);
+    void setIP(std::string ip);
+    void setPort(uint16_t port);
+
+    // control
 	void start();
 	void stop();
 
@@ -69,7 +74,7 @@ private:
 	void handler();
 	void init();
 	void loop();
-	void deinit();
+    void deinit();
 
 	// socket wrappers
 	int openSocket();

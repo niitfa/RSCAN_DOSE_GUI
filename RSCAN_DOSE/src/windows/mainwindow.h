@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "rscan_dose_client.h"
+#include "settingswindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,8 +17,15 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_pushButton_settings_clicked();
+
+private:
+    void setupClient();
 private:
     Ui::MainWindow *ui;
+    RSCANDoseClient* client = nullptr;
+    SettingsWindow* settingsWindow = new SettingsWindow(this);
 };
 
 #endif // MAINWINDOW_H

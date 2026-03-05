@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include <QFont>
-
-// add tcp client class
+#include <QPushButton>
+#include "rscan_dose_client.h"
 
 namespace Ui {
 class WidgetVoltage;
@@ -17,13 +17,47 @@ class WidgetVoltage : public QWidget
 public:
     explicit WidgetVoltage(QWidget *parent = nullptr);
     ~WidgetVoltage();
-    int getInputVoltage();
+    int getInputVoltage(); // needed?
+    void setTCPClient(RSCANDoseClient*);
+
 private slots:
     void on_pushButton_changeVoltage_clicked();
+    void on_pushButton_plus_clicked();
+    void on_pushButton_minus_clicked();
+
+private:
+    void setEnabledStyle(QPushButton*);
+    void setDisabledStyle(QPushButton*);
+    void setInactiveStyle(QPushButton*);
+
+    void setPlusButtonEnabled();
+    void setPlusButtonDisabled();
+    void setMinusButtonEnabled();
+    void setMinusButtonDisabled();
+    void setPolarity(uint8_t polarity);
+
+    // constructor wrappers
+    // frames
+    void drawExternalFrame();
+    void drawValueFrame();
+    void drawPolarityFrame();
+
+    // icons, texts, buttons
+    void drawHeadIcons();
+    void drawHeadTexts();
+
+    // setup font
+    void setupFont();
+    void setupSwitch();
+    void setupChangeVoltageButton();
+    void setupLineEditVoltage();
 
 private:
     Ui::WidgetVoltage *ui;
     QFont buttonsFont;
+    uint8_t lastPolarity = 1;
+    uint8_t lastEnabled = 0;
+    RSCANDoseClient* client = nullptr;
 };
 
 #endif // WIDGETVOLTAGE_H
