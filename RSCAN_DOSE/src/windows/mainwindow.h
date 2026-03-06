@@ -16,12 +16,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void enableMainWindow();
+    void disableMainWindow();
 
 private slots:
     void on_pushButton_settings_clicked();
-
 private:
     void setupClient();
+    void setupSettingsButton();
+    void setupConnectWidget();
 private:
     Ui::MainWindow *ui;
     RSCANDoseClient* client = nullptr;

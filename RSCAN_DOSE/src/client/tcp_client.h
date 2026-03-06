@@ -8,6 +8,8 @@
 #include <mutex>
 #include <arpa/inet.h>
 
+// add received callback???
+
 class TCPClient
 {
 	enum class TCPSocketState

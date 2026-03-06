@@ -1,6 +1,5 @@
 #include "widgetvoltage.h"
 #include "ui_widgetvoltage.h"
-#include <QIcon>
 #include <QMessageBox>
 
 WidgetVoltage::WidgetVoltage(QWidget *parent) :
@@ -21,127 +20,13 @@ WidgetVoltage::WidgetVoltage(QWidget *parent) :
     setupLineEditVoltage();
 
     // logic setup
-    setPolarity(!this->lastPolarity);
+    //setPolarity(!this->lastPolarity);
 }
 
 WidgetVoltage::~WidgetVoltage()
 {
+    delete timer;
     delete ui;
-}
-
-void WidgetVoltage::setEnabledStyle(QPushButton * button)
-{
-    if(button)
-    {
-        button->setStyleSheet(
-                // unpressed
-                "QPushButton { border-style: outset; }"
-                "QPushButton { border-radius:5px; }"
-                "QPushButton { border-width:1px; }"
-                "QPushButton { border-color: rgb(220,220,220); }"
-                "QPushButton { background-color: rgb(240,240,240); }"
-                // hover
-                "QPushButton:hover { background-color: rgb(230,230,230);  }"
-                // pressed
-                "QPushButton:pressed { background-color: rgb(200,200,200);  }"
-                );
-    }
-}
-
-void WidgetVoltage::setDisabledStyle(QPushButton * button)
-{
-    if(button)
-    {
-        button->setStyleSheet(
-                // unpressed
-                "QPushButton { border-style: outset; }"
-                "QPushButton { border-radius:5px; }"
-                "QPushButton { border-width:1px; }"
-                "QPushButton { border-color: rgb(50,100,210); }"
-                "QPushButton { background-color: rgb(60,120,230); }"
-                );
-    }
-}
-
-void WidgetVoltage::setInactiveStyle(QPushButton* button)
-{
-    if(button)
-    {
-        button->setStyleSheet(
-                // unpressed
-                "QPushButton { border-style: outset; }"
-                "QPushButton { border-radius:5px; }"
-                "QPushButton { border-width:0px; }"
-                "QPushButton { background-color: rgb(129,142,172); }"
-                );
-    }
-}
-
-void WidgetVoltage::setPlusButtonEnabled()
-{
-    QPushButton* button = ui->pushButton_plus;
-    button->setEnabled(1);
-    QIcon icon (":/img/icon_plus_dark.png");
-    int iconSize = 22;
-    button->setText("");
-    button->setIcon(icon);
-    button->setIconSize(QSize(iconSize, iconSize));
-    this->setEnabledStyle(button);
-}
-
-void WidgetVoltage::setPlusButtonDisabled()
-{
-    QPushButton* button = ui->pushButton_plus;
-    button->setDisabled(1);
-    QIcon icon (":/img/icon_plus_bright.png");
-    int iconSize = 22;
-    button->setText("");
-    button->setIcon(icon);
-    button->setIconSize(QSize(iconSize, iconSize));
-    this->setDisabledStyle(button);
-}
-
-void WidgetVoltage::setMinusButtonEnabled()
-{
-    QPushButton* button = ui->pushButton_minus;
-    button->setEnabled(1);
-    QIcon icon (":/img/icon_minus_dark.png");
-    int iconSize = 25;
-    button->setText("");
-    button->setIcon(icon);
-    button->setIconSize(QSize(iconSize, iconSize));
-    this->setEnabledStyle(button);
-}
-
-void WidgetVoltage::setMinusButtonDisabled()
-{
-    QPushButton* button = ui->pushButton_minus;
-    button->setDisabled(1);
-    QIcon icon (":/img/icon_minus_bright.png");
-    int iconSize = 25;
-    button->setText("");
-    button->setIcon(icon);
-    button->setIconSize(QSize(iconSize, iconSize));
-    this->setDisabledStyle(button);
-}
-
-void WidgetVoltage::setPolarity(uint8_t polarity)
-{
-    if((polarity != this->lastPolarity))
-    {
-        if(polarity) // negative
-        {
-            this->setMinusButtonDisabled();
-            this->setPlusButtonEnabled();
-        }
-        else // positive
-        {
-            this->setPlusButtonDisabled();
-            this->setMinusButtonEnabled();
-
-        }
-        this->lastPolarity = polarity;
-    }
 }
 
 void WidgetVoltage::drawExternalFrame()
@@ -214,7 +99,7 @@ void WidgetVoltage::drawHeadTexts()
     headFont.setPixelSize(16);
     headFont.setWeight(50);
 
-    QString headTextColor = "color: black;";
+    QString headTextColor = "color: rgb(70,70,70);";
 
     ui->label_headText->clear();
     ui->label_headText->setStyleSheet(
@@ -263,24 +148,51 @@ void WidgetVoltage::setupChangeVoltageButton()
                 "QPushButton:hover { background-color: rgb(40,100,200);  }"
                 // pressed
                 "QPushButton:pressed { background-color: rgb(30,80,170);  }"
+                // disabled
+                "QPushButton:disabled { border-width:0px;  }"
+                "QPushButton:disabled { background-color: rgb(200,200,200);  }"
+                "QPushButton:disabled { color: rgb(100,100,100);  }"
                 );
 }
 
 void WidgetVoltage::setupLineEditVoltage()
 {
     // label Voltage value measurements
+    QString textColor = "color: rgb(30,30,30);";
     ui->label_value->setStyleSheet(
-                "border-width:0px;"
+                "border-width:0px;" +
+                textColor
                 );
     ui->label_value->setFont(buttonsFont);
     ui->label_value->setText("В");
 
     // line edit voltage input
     ui->lineEdit_voltageInput->setStyleSheet(
-                "border-width:0px;"
+                "border-width:0px;" +
+                textColor
                 );
     ui->lineEdit_voltageInput->setFont(buttonsFont);
     ui->lineEdit_voltageInput->setText(QString::number(0));
+}
+
+void WidgetVoltage::watchdogEnable()
+{
+    if(!this->timer)
+    {
+        this->timer = new QTimer();
+        this->timer->setSingleShot(false);
+        this->timer->setInterval(this->wdInterval_ms);
+        QObject::connect(this->timer, SIGNAL(timeout()), this, SLOT(watchdogTick()));
+    }
+    timer->start();
+}
+
+void WidgetVoltage::watchdogDisable()
+{
+    if(this->timer)
+    {
+        timer->stop();
+    }
 }
 
 int WidgetVoltage::getInputVoltage()
@@ -291,6 +203,38 @@ int WidgetVoltage::getInputVoltage()
 void WidgetVoltage::setTCPClient(RSCANDoseClient *client)
 {
     this->client = client;
+}
+
+#include <iostream>
+void WidgetVoltage::setEnabled(bool enabled)
+{
+    QWidget::setEnabled(enabled);
+    if(enabled)
+    {
+        // polarity
+
+
+
+
+        watchdogEnable();
+        std::cout << "enabled\n";
+    }
+    else
+    {
+        watchdogDisable();
+        // buttons style
+
+        std::cout << "disabled\n";
+    }
+}
+
+void WidgetVoltage::setDisabled(bool disabled)
+{
+    this->WidgetVoltage::setEnabled(!disabled);
+}
+
+void WidgetVoltage::watchdogTick()
+{
 }
 
 void WidgetVoltage::on_pushButton_changeVoltage_clicked()
@@ -321,6 +265,21 @@ void WidgetVoltage::on_pushButton_plus_clicked()
 }
 
 void WidgetVoltage::on_pushButton_minus_clicked()
+{
+
+}
+
+void WidgetVoltage::setEnabledStyle(QPushButton *button, const QIcon &icon, int iconSize)
+{
+
+}
+
+void WidgetVoltage::setDisabledStyle(QPushButton *button, const QIcon &icon, int iconSize)
+{
+
+}
+
+void WidgetVoltage::setBlockedStyle(QPushButton *button, const QIcon &icon, int iconSize)
 {
 
 }

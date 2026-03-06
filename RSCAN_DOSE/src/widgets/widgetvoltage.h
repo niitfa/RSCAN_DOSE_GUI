@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QFont>
+#include <QIcon>
 #include <QPushButton>
+#include <QTimer>
 #include "rscan_dose_client.h"
 
 namespace Ui {
@@ -20,21 +22,20 @@ public:
     int getInputVoltage(); // needed?
     void setTCPClient(RSCANDoseClient*);
 
+    // override
+    void setEnabled(bool);
+    void setDisabled(bool);
 private slots:
+    void watchdogTick();
     void on_pushButton_changeVoltage_clicked();
     void on_pushButton_plus_clicked();
     void on_pushButton_minus_clicked();
 
 private:
-    void setEnabledStyle(QPushButton*);
-    void setDisabledStyle(QPushButton*);
-    void setInactiveStyle(QPushButton*);
+    void setEnabledStyle(QPushButton* button, const QIcon& icon, int iconSize);
+    void setDisabledStyle(QPushButton* button, const QIcon& icon, int iconSize);
+    void setBlockedStyle(QPushButton* button, const QIcon& icon, int iconSize);
 
-    void setPlusButtonEnabled();
-    void setPlusButtonDisabled();
-    void setMinusButtonEnabled();
-    void setMinusButtonDisabled();
-    void setPolarity(uint8_t polarity);
 
     // constructor wrappers
     // frames
@@ -52,12 +53,19 @@ private:
     void setupChangeVoltageButton();
     void setupLineEditVoltage();
 
+    // timer
+    void watchdogEnable();
+    void watchdogDisable();
+
 private:
     Ui::WidgetVoltage *ui;
     QFont buttonsFont;
     uint8_t lastPolarity = 1;
     uint8_t lastEnabled = 0;
     RSCANDoseClient* client = nullptr;
+
+    QTimer* timer = nullptr;
+    int wdInterval_ms = 100;
 };
 
 #endif // WIDGETVOLTAGE_H

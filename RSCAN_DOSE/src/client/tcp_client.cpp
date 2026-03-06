@@ -258,9 +258,10 @@ std::string TCPClient::getCurrentTimeStr()
 	time_t timestamp = time(&timestamp);
 	struct tm datetime = *localtime(&timestamp);
 	std::string res;
-	res += std::to_string ( datetime.tm_hour ) + ":";
-	res += std::to_string ( datetime.tm_min )  + ":";
-	res += std::to_string ( datetime.tm_sec );	
+
+    res += ((datetime.tm_hour < 10) ? "0" : "") +  std::to_string ( datetime.tm_hour ) + ":";
+    res += ((datetime.tm_min < 10) ? "0" : "") + std::to_string ( datetime.tm_min )  + ":";
+    res += ((datetime.tm_sec < 10) ? "0" : "") + std::to_string ( datetime.tm_sec );
 	return res;
 }
 
