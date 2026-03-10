@@ -18,9 +18,6 @@ WidgetVoltage::WidgetVoltage(QWidget *parent) :
     setupSwitch();
     setupChangeVoltageButton();
     setupLineEditVoltage();
-
-    // logic setup
-    //setPolarity(!this->lastPolarity);
 }
 
 WidgetVoltage::~WidgetVoltage()
@@ -151,7 +148,7 @@ void WidgetVoltage::setupChangeVoltageButton()
                 // disabled
                 "QPushButton:disabled { border-width:0px;  }"
                 "QPushButton:disabled { background-color: rgb(200,200,200);  }"
-                "QPushButton:disabled { color: rgb(100,100,100);  }"
+                "QPushButton:disabled { color: white;  }"
                 );
 }
 
@@ -195,6 +192,63 @@ void WidgetVoltage::watchdogDisable()
     }
 }
 
+void WidgetVoltage::setActiveWidgetsEnabled(bool enabled)
+{
+    ui->pushButton_changeVoltage->setEnabled(enabled);
+    ui->lineEdit_voltageInput->setEnabled(enabled);
+    ui->pushButton_minus->setEnabled(enabled);
+    ui->pushButton_plus->setEnabled(enabled);
+}
+
+void WidgetVoltage::setupWidgetsHVEnabled(bool enabled)
+{
+    if(enabled)
+    {
+        this->setActiveWidgetsEnabled(true);
+        if(!ui->switch_hvEnable->isChecked())
+        {
+            ui->switch_hvEnable->setChecked(true);
+        }
+
+    }
+    else
+    {
+        this->setActiveWidgetsEnabled(false);
+        if(ui->switch_hvEnable->isChecked())
+        {
+            ui->switch_hvEnable->setChecked(false);
+        }
+    }
+
+}
+
+void WidgetVoltage::setupWidgetsPolarity(bool polarity)
+{
+    if(polarity) // -
+    {
+        this->setMinusButtonActive(false);
+        this->setPlusButtonActive(true);
+    }
+    else // +
+    {
+        this->setMinusButtonActive(true);
+        this->setPlusButtonActive(false);
+    }
+}
+
+void WidgetVoltage::enablePolarityButtons(bool enabled)
+{
+    if((ui->pushButton_plus->isEnabled() != enabled))
+    {
+        ui->pushButton_plus->setEnabled(enabled);
+    }
+
+    if((ui->pushButton_minus->isEnabled() != enabled))
+    {
+        ui->pushButton_minus->setEnabled(enabled);
+    }
+}
+
 int WidgetVoltage::getInputVoltage()
 {
     return ui->lineEdit_voltageInput->text().toInt();
@@ -205,26 +259,65 @@ void WidgetVoltage::setTCPClient(RSCANDoseClient *client)
     this->client = client;
 }
 
+void WidgetVoltage::setCommandCodes(
+        RSCANDoseCommandCode hvEnableCode,
+        RSCANDoseCommandCode hvDisableCode,
+        RSCANDoseCommandCode setVoltageCode,
+        RSCANDoseCommandCode setPolarityCode
+        )
+{
+    this->hvEnableCode = hvEnableCode;
+    this->hvDisableCode = hvDisableCode;
+    this->setVoltageCode = setVoltageCode;
+    this->setPolarityCode = setPolarityCode;
+}
+
+void WidgetVoltage::setValueCodes(
+        RSCANDoseValueCode getDoseCode,
+        RSCANDoseValueCode getHVCode,
+        RSCANDoseValueCode getTemperatureCode,
+        RSCANDoseValueCode getSensitivityCode,
+        RSCANDoseValueCode getPolarityCode,
+        RSCANDoseValueCode getHVEnabledCode
+        )
+{
+    this->getDoseCode = getDoseCode;
+    this->getHVCode = getHVCode;
+    this->getTemperatureCode = getTemperatureCode;
+    this->getSensitivityCode = getSensitivityCode;
+    this->getPolarityCode = getPolarityCode;
+    this->getHVEnabledCode = getHVEnabledCode;
+}
+
 #include <iostream>
 void WidgetVoltage::setEnabled(bool enabled)
 {
     QWidget::setEnabled(enabled);
-    if(enabled)
+    if(client)
     {
-        // polarity
+        if(enabled)
+        {
+            //  voltage
+            this->setupWidgetsHVEnabled(client->readValue(this->getHVEnabledCode));
+            this->previousHVEnabledState = client->readValue(this->getHVEnabledCode);
 
+            // polarity
+            this->setupWidgetsPolarity(client->readValue(this->getPolarityCode));
+            this->previousPolarity = client->readValue(this->getPolarityCode);
 
+            // enable wd
+            watchdogEnable();
+        }
+        else
+        {
+            // voltage
+            // polarity
+            this->setupWidgetsPolarity(client->readValue(this->getPolarityCode));
+            this->previousPolarity = client->readValue(this->getPolarityCode);
 
-
-        watchdogEnable();
-        std::cout << "enabled\n";
-    }
-    else
-    {
-        watchdogDisable();
-        // buttons style
-
-        std::cout << "disabled\n";
+            // enable wd
+            watchdogDisable();
+        }
     }
 }
 
@@ -235,51 +328,177 @@ void WidgetVoltage::setDisabled(bool disabled)
 
 void WidgetVoltage::watchdogTick()
 {
+    if(client)
+    {
+        // check voltage enabled
+        bool hvEnabled = client->readValue(this->getHVEnabledCode);
+        if(hvEnabled != this->previousHVEnabledState)
+        {
+            this->setupWidgetsHVEnabled(hvEnabled);
+            this->previousHVEnabledState = hvEnabled;
+        }
+
+        // check polarity
+        bool polarity = client->readValue(this->getPolarityCode);
+        if(polarity != this->previousPolarity)
+        {
+            this->setupWidgetsPolarity(polarity);
+            this->previousPolarity = polarity;
+        }
+
+        // check polarity voltage limit
+        int voltage = client->readValue(this->getHVCode);
+        if(hvEnabled)
+        {
+            if(qAbs(voltage) < this->polaritySwitchLimitVoltage)
+            {
+                this->enablePolarityButtons(true);
+            }
+            else
+            {
+                this->enablePolarityButtons(false);
+            }
+        }
+    }
 }
 
 void WidgetVoltage::on_pushButton_changeVoltage_clicked()
 {
-    /*int maxVoltage = 500;
     int targetVoltage = ui->lineEdit_voltageInput->text().toInt();
-    if(this->transmitter)
+    if(client)
     {
-        if(targetVoltage < 0 || targetVoltage > maxVoltage) // check range
+        if(targetVoltage < 0 || targetVoltage > this->maxVoltage) // check range
         {
             // bad value
             QMessageBox::critical(this,
                                   "Ошибка!",
                                   "Допустимый диапазон:\nV мин. = 0 В\nV макс. = " + QString::number(maxVoltage) + " B"
                                   );
+            ui->lineEdit_voltageInput->setText(QString::number(0));
         }
         else
         {
             // good value
-            this->transmitter->setVoltageValue(static_cast<uint16_t>(targetVoltage));
+            client->sendCommand(this->setVoltageCode, targetVoltage);
         }
-    } */
+    }
 }
 
 void WidgetVoltage::on_pushButton_plus_clicked()
 {
-
+    if(client)
+    {
+        client->sendCommand(this->setPolarityCode, 0);
+    }
 }
 
 void WidgetVoltage::on_pushButton_minus_clicked()
 {
+    if(client)
+    {
+        client->sendCommand(this->setPolarityCode, 1);
+    }
+}
+
+void WidgetVoltage::setInactiveStyle(QPushButton *button, const QIcon &icon, int iconSize)
+{
+    if(button)
+    {
+        button->setText("");
+        button->setIcon(icon);
+        button->setIconSize(QSize(iconSize, iconSize));
+
+        button->setStyleSheet(
+                // unpressed
+                "QPushButton { border-style: outset; }"
+                "QPushButton { border-radius:5px; }"
+                "QPushButton { border-width:1px; }"
+                "QPushButton { border-color: rgb(50,100,210); }"
+                "QPushButton { background-color: rgb(60,120,230); }"
+
+                // disabled
+                "QPushButton:disabled { border-width:0px;  }"
+                "QPushButton:disabled { background-color: rgb(200,200,200);  }"
+                );
+    }
+}
+
+void WidgetVoltage::setActiveStyle(QPushButton *button, const QIcon &icon, int iconSize)
+{
+    if(button)
+    {
+        button->setText("");
+        button->setIcon(icon);
+        button->setIconSize(QSize(iconSize, iconSize));
+
+        button->setStyleSheet(
+                // unpressed
+                "QPushButton { border-style: outset; }"
+                "QPushButton { border-radius:5px; }"
+                "QPushButton { border-width:1px; }"
+                "QPushButton { border-color: rgb(220,220,220); }"
+                "QPushButton { background-color: rgb(240,240,240); }"
+                // hover
+                "QPushButton:hover { background-color: rgb(230,230,230);  }"
+                // pressed
+                "QPushButton:pressed { background-color: rgb(200,200,200);  }"
+
+                // disabled
+                "QPushButton:disabled { border-width:0px;  }"
+                "QPushButton:disabled { background-color: rgb(255,255,255);  }"
+                );
+    }
 
 }
 
-void WidgetVoltage::setEnabledStyle(QPushButton *button, const QIcon &icon, int iconSize)
+void WidgetVoltage::setMinusButtonActive(bool active)
 {
-
+    QPushButton* button = ui->pushButton_minus;
+    QIcon icon;
+    int iconSize = 25;
+    if(active)
+    {
+        icon = QIcon(":/img/icon_minus_dark.png");
+        this->setActiveStyle(button, icon, iconSize);
+    }
+    else
+    {
+        icon = QIcon(":/img/icon_minus_bright.png");
+        this->setInactiveStyle(button, icon, iconSize);
+    }
 }
 
-void WidgetVoltage::setDisabledStyle(QPushButton *button, const QIcon &icon, int iconSize)
+void WidgetVoltage::setPlusButtonActive(bool active)
 {
-
+    QPushButton* button = ui->pushButton_plus;
+    QIcon icon;
+    int iconSize = 22;
+    if(active)
+    {
+        icon = QIcon(":/img/icon_plus_dark.png");
+        this->setActiveStyle(button, icon, iconSize);
+    }
+    else
+    {
+        icon = QIcon(":/img/icon_plus_bright.png");
+        this->setInactiveStyle(button, icon, iconSize);
+    }
 }
 
-void WidgetVoltage::setBlockedStyle(QPushButton *button, const QIcon &icon, int iconSize)
+void WidgetVoltage::on_switch_hvEnable_clicked()
 {
-
+    if(ui->switch_hvEnable->isChecked())
+    {
+        if(client)
+        {
+            client->sendCommand(this->hvEnableCode);
+        }
+    }
+    else
+    {
+        if(client)
+        {
+            client->sendCommand(this->hvDisableCode);
+        }
+    }
 }

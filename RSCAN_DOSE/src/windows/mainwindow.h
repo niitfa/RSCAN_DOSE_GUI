@@ -18,6 +18,7 @@ public:
     ~MainWindow();
     void enableMainWindow();
     void disableMainWindow();
+    void updateWindowData();
 
 private slots:
     void on_pushButton_settings_clicked();
@@ -25,6 +26,10 @@ private:
     void setupClient();
     void setupSettingsButton();
     void setupConnectWidget();
+    void setupVoltageWidgets();
+    void setupSensitivityWidgets();
+    void setupDisplayWidgets();
+
 private:
     Ui::MainWindow *ui;
     RSCANDoseClient* client = nullptr;

@@ -10,7 +10,7 @@ WidgetValue::WidgetValue(QWidget *parent) :
     setValueText("0");
     setHeadText("Description, unit");
 
-    QFont headFont;
+    /*QFont headFont;
     headFont.setFamily("Inter");
     headFont.setPixelSize(16);
     headFont.setWeight(40);
@@ -18,6 +18,16 @@ WidgetValue::WidgetValue(QWidget *parent) :
     QFont valueFont;
     valueFont.setFamily("Inter");
     valueFont.setPixelSize(25); // 28
+    valueFont.setWeight(60); */
+
+    QFont headFont;
+    headFont.setFamily("Inter");
+    headFont.setPixelSize(16);
+    headFont.setWeight(55);
+
+    QFont valueFont;
+    valueFont.setFamily("Inter");
+    valueFont.setPixelSize(40); // 28
     valueFont.setWeight(60);
 
     // border
@@ -61,34 +71,4 @@ void WidgetValue::setHeadText(QString qstr)
 void WidgetValue::setValueText(QString qstr)
 {
     ui->label_value->setText(qstr);
-}
-
-void WidgetValue::setGraph(QGraph *qgraph, int index)
-{
-    this->qgraph = qgraph;
-    this->graphIndex = index;
-   // setHeadText(QString::number(index / this->lineLength) + ":" + QString::number(index % this->lineLength));
-    QCPGraph* g = qgraph->graph(index);
-    if(g)
-    {
-        setHeadText(g->name());
-    }
-}
-
-void WidgetValue::setChecked(bool checked)
-{
-    ui->checkBox->setChecked(checked);
-    on_checkBox_clicked();
-}
-
-void WidgetValue::on_checkBox_clicked()
-{
-    if(ui->checkBox->checkState() == Qt::CheckState::Checked)
-    {
-        if(this->qgraph) { qgraph->showGraph(this->graphIndex); }
-    }
-    else if (ui->checkBox->checkState() == Qt::CheckState::Unchecked)
-    {
-        if(this->qgraph) { qgraph->hideGraph(this->graphIndex); }
-    }
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <mutex>
+#include <functional>
 #include <arpa/inet.h>
 
 // add received callback???
@@ -59,6 +60,7 @@ public:
     void setCPUs(std::vector<int> cpus);
     void setIP(std::string ip);
     void setPort(uint16_t port);
+    void setMessageReceivedCallback(std::function<void ()>&);
 
     // control
 	void start();
@@ -87,6 +89,8 @@ private:
 	// time
 	std::string getCurrentTimeStr();
 	void measureUpdateTime();
+
+    std::function<void(void)> messageReceivedCallback = [](void) {};
 };
 
 #endif

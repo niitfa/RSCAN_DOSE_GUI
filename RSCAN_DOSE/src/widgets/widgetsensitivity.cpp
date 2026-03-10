@@ -12,8 +12,6 @@ WidgetSensitivity::WidgetSensitivity(QWidget *parent) :
     drawIcon();
     drawHeadText();
     setupButtonsStyle();
-
-    setSensitivity(!this->lastSensitivity);
 }
 
 WidgetSensitivity::~WidgetSensitivity()
@@ -21,96 +19,60 @@ WidgetSensitivity::~WidgetSensitivity()
     delete ui;
 }
 
-void WidgetSensitivity::setSensitivity(uint8_t sensitivity)
-{
-    if((sensitivity != this->lastSensitivity))
-    {
-        if(sensitivity)
-        {
-            this->setHighButtonDisabled();
-            this->setLowButtonEnabled();
-        }
-        else
-        {
-            this->setLowButtonDisabled();
-            this->setHighButtonEnabled();
-
-        }
-        this->lastSensitivity = sensitivity;
-    }
-}
 
 void WidgetSensitivity::setTCPClient(RSCANDoseClient *client)
 {
     this->client = client;
 }
 
-void WidgetSensitivity::setEnabledStyle(QPushButton *button)
+void WidgetSensitivity::setCommandCodes(RSCANDoseCommandCode setSensitivityCode)
 {
-    if(button)
+    this->setSensitivityCode = setSensitivityCode;
+}
+
+void WidgetSensitivity::setValueCodes(RSCANDoseValueCode getSensitivityCode)
+{
+    this->getSensitivityCode = getSensitivityCode;
+}
+
+void WidgetSensitivity::setEnabled(bool enabled)
+{
+   QWidget::setEnabled(enabled);
+   if(client)
+   {
+       if(enabled)
+       {
+            this->setupSensitivityButtons(client->readValue(this->getSensitivityCode));
+            this->previousSensitivity = client->readValue(this->getSensitivityCode);
+            watchdogEnable();
+       }
+       else
+       {
+            this->setupSensitivityButtons(client->readValue(this->getSensitivityCode));
+            this->previousSensitivity = client->readValue(this->getSensitivityCode);
+            watchdogDisable();
+       }
+   }
+}
+
+void WidgetSensitivity::setDisabled(bool disabled)
+{
+    this->WidgetSensitivity::setEnabled(!disabled);
+}
+
+void WidgetSensitivity::watchdogTick()
+{
+    if(client)
     {
-        button->setStyleSheet(
-                // unpressed
-                "QPushButton { border-style: outset; }"
-                "QPushButton { border-radius:5px; }"
-                "QPushButton { border-width:1px; }"
-                "QPushButton { border-color: rgb(220,220,220); }"
-                "QPushButton { background-color: rgb(240,240,240); }"
-                "QPushButton { color: rgb(20,20,20); }"
-                // hover
-                "QPushButton:hover { background-color: rgb(230,230,230);  }"
-                // pressed
-                "QPushButton:pressed { background-color: rgb(200,200,200);  }"
-                );
+        // check sensitivity
+        bool sensitivity = client->readValue(this->getSensitivityCode);
+        if(sensitivity != this->previousSensitivity)
+        {
+            this->setupSensitivityButtons(sensitivity);
+            this->previousSensitivity = sensitivity;
+        }
     }
-}
 
-void WidgetSensitivity::setDisabledStyle(QPushButton *button)
-{
-    if(button)
-    {
-        button->setStyleSheet(
-                // unpressed
-                "QPushButton { border-style: outset; }"
-                "QPushButton { border-radius:5px; }"
-                "QPushButton { border-width:1px; }"
-                "QPushButton { border-color: rgb(50,100,210); }"
-                "QPushButton { background-color: rgb(60,120,230); }"
-                "QPushButton { color: white; }"
-                );
-    }
-}
-
-void WidgetSensitivity::setLowButtonEnabled()
-{
-    QPushButton* button = ui->pushButton_sensitivityLow;
-    button->setEnabled(1);
-    button->setText("Низкая");
-    this->setEnabledStyle(button);
-}
-
-void WidgetSensitivity::setLowButtonDisabled()
-{
-    QPushButton* button = ui->pushButton_sensitivityLow;
-    button->setDisabled(1);
-    button->setText("Низкая");
-    this->setDisabledStyle(button);
-}
-
-void WidgetSensitivity::setHighButtonEnabled()
-{
-    QPushButton* button = ui->pushButton_sensitivityHigh;
-    button->setEnabled(1);
-    button->setText("Высокая");
-    this->setEnabledStyle(button);
-}
-
-void WidgetSensitivity::setHighButtonDisabled()
-{
-    QPushButton* button = ui->pushButton_sensitivityHigh;
-    button->setDisabled(1);
-    button->setText("Высокая");
-    this->setDisabledStyle(button);
 }
 
 void WidgetSensitivity::drawInternalFrame()
@@ -159,7 +121,8 @@ void WidgetSensitivity::drawHeadText()
     headFont.setPixelSize(16);
     headFont.setWeight(50);
 
-    QString headTextColor = "color: black;";
+
+    QString headTextColor = "color: rgb(70,70,70);";
     ui->label_headText->clear();
     ui->label_headText->setStyleSheet(
                 "border-width:0px;" +
@@ -181,21 +144,125 @@ void WidgetSensitivity::setupButtonsStyle()
     ui->pushButton_sensitivityHigh->setText("Высокая");
 }
 
+void WidgetSensitivity::watchdogEnable()
+{
+    if(!this->timer)
+    {
+        this->timer = new QTimer();
+        this->timer->setSingleShot(false);
+        this->timer->setInterval(this->wdInterval_ms);
+        QObject::connect(this->timer, SIGNAL(timeout()), this, SLOT(watchdogTick()));
+    }
+    timer->start();
+}
+
+void WidgetSensitivity::watchdogDisable()
+{
+    if(this->timer)
+    {
+        timer->stop();
+    }
+}
+
+void WidgetSensitivity::setupSensitivityButtons(bool sensitivity)
+{
+    if(sensitivity)
+    {
+        this->setLowButtonActive(true);
+        this->setHighButtonActive(false);
+    }
+    else
+    {
+        this->setLowButtonActive(false);
+        this->setHighButtonActive(true);
+    }
+}
+
 void WidgetSensitivity::on_pushButton_sensitivityLow_clicked()
 {
-    /*if(transmitter)
+    if(client)
     {
-        transmitter->setBroadRange();
-        //setSensivity(0); // debug!!!!
-    } */
+        client->sendCommand(this->setSensitivityCode, 0);
+    }
 }
 
 void WidgetSensitivity::on_pushButton_sensitivityHigh_clicked()
 {
-    /* if(transmitter)
+    if(client)
     {
-        transmitter->setNarrowRange();
-        //setSensivity(1); // debug!!!!
-    } */
+        client->sendCommand(this->setSensitivityCode, 1);
+    }
+}
+
+void WidgetSensitivity::setInactiveStyle(QPushButton *button)
+{
+    if(button)
+    {
+        button->setStyleSheet(
+                // unpressed
+                "QPushButton { border-style: outset; }"
+                "QPushButton { border-radius:5px; }"
+                "QPushButton { border-width:1px; }"
+                "QPushButton { border-color: rgb(50,100,210); }"
+                "QPushButton { background-color: rgb(60,120,230); }"
+                "QPushButton { color: white; }"
+
+                // disabled
+                "QPushButton:disabled { border-width:0px;  }"
+                "QPushButton:disabled { background-color: rgb(200,200,200);  }"
+                "QPushButton:disabled { color: white;  }"
+                );
+    }
+
+}
+
+void WidgetSensitivity::setActiveStyle(QPushButton *button)
+{
+    if(button)
+    {
+        button->setStyleSheet(
+                // unpressed
+                "QPushButton { border-style: outset; }"
+                "QPushButton { border-radius:5px; }"
+                "QPushButton { border-width:1px; }"
+                "QPushButton { border-color: rgb(220,220,220); }"
+                "QPushButton { background-color: rgb(240,240,240); }"
+                // hover
+                "QPushButton:hover { background-color: rgb(230,230,230);  }"
+                // pressed
+                "QPushButton:pressed { background-color: rgb(200,200,200);  }"
+
+                // disabled
+                "QPushButton:disabled { border-width:0px;  }"
+                "QPushButton:disabled { background-color: rgb(255,255,255);  }"
+                "QPushButton:disabled { color: rgb(200,200,200);  }"
+                );
+    }
+}
+
+void WidgetSensitivity::setLowButtonActive(bool active)
+{
+    QPushButton* button = ui->pushButton_sensitivityLow;
+    if(active)
+    {
+        this->setActiveStyle(button);
+    }
+    else
+    {
+        this->setInactiveStyle(button);
+    }
+}
+
+void WidgetSensitivity::setHighButtonActive(bool active)
+{
+    QPushButton* button = ui->pushButton_sensitivityHigh;
+    if(active)
+    {
+        this->setActiveStyle(button);
+    }
+    else
+    {
+        this->setInactiveStyle(button);
+    }
 }
 

@@ -14,10 +14,12 @@ RSCANDoseClient::RSCANDoseClient(std::string ip, uint16_t port)
     map[RSCANDoseValueCode::HV_B]          = {16, 4};
     map[RSCANDoseValueCode::Temp_A]        = {20, 4};
     map[RSCANDoseValueCode::Temp_B]        = {24, 4};
-    map[RSCANDoseValueCode::Range_A]       = {28, 1};
-    map[RSCANDoseValueCode::Range_B]       = {29, 1};
+    map[RSCANDoseValueCode::Sensitivity_A] = {28, 1};
+    map[RSCANDoseValueCode::Sensitivity_B] = {29, 1};
     map[RSCANDoseValueCode::HV_Polarity_A] = {30, 1};
     map[RSCANDoseValueCode::HV_Polarity_B] = {31, 1};
+    map[RSCANDoseValueCode::HV_Enabled_A] = {32, 1};
+    map[RSCANDoseValueCode::HV_Enabled_B] = {33, 1};
 }
 
 RSCANDoseClient::~RSCANDoseClient()

@@ -84,6 +84,11 @@ void TCPClient::setPort(uint16_t port)
     this->port = port;
 }
 
+void TCPClient::setMessageReceivedCallback(std::function<void ()> &f)
+{
+    this->messageReceivedCallback = f;
+}
+
 void TCPClient::setVerbose(bool verbose)
 {
 	this->verbose = verbose;	
@@ -181,6 +186,7 @@ void TCPClient::loop()
 		{
 			connected.store(true);
 			measureUpdateTime();
+            messageReceivedCallback();
 		}
 		break;
 	case TCPSocketState::Closing:

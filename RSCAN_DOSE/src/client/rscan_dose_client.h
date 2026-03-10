@@ -30,10 +30,12 @@ enum RSCANDoseValueCode
 	HV_B,
 	Temp_A,
 	Temp_B,
-	Range_A,
-	Range_B,
+    Sensitivity_A,
+    Sensitivity_B,
 	HV_Polarity_A,
 	HV_Polarity_B,
+    HV_Enabled_A,
+    HV_Enabled_B,
 	Size 
 };
 
