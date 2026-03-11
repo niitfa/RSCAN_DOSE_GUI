@@ -68,22 +68,6 @@ void WidgetConnect::drawButtonIcon()
     button->setIconSize(size);
 }
 
-bool WidgetConnect::waitForConnection(uint32_t msec)
-{
-    const uint32_t checkPeriod_ms = 200;
-    uint16_t checkCounter = (msec / checkPeriod_ms) + 1;
-
-    while(checkCounter--)
-    {
-        if(client->isConnected())
-        {
-            return true;
-        }
-        QThread::msleep(checkPeriod_ms);
-    }
-    return false;
-}
-
 void WidgetConnect::watchdogEnable()
 {
     if(!this->timer)
@@ -103,17 +87,19 @@ void WidgetConnect::watchdogDisable()
     {
         this->timer->stop();
     }
+    //this->client->stop();
 }
 
+#include <iostream>
 void WidgetConnect::watchdogTick()
 {
     switch ( this->wdState )
     {
     case WatchdogState::Init:
         this->wdConnectionCounter = (this->wdConnectionTime_ms / this->wdInterval_ms) + 1;
-        this->wdState = WatchdogState::WaitingForConnection;
-        this->client->start();
         this->statusLED->drawProcess();
+        this->client->start();
+        this->wdState = WatchdogState::WaitingForConnection;
         break;
     case WatchdogState::WaitingForConnection:
         if(this->wdConnectionCounter--)

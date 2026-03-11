@@ -9,7 +9,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Настройки");
-    setFixedSize(300, 170);
+    setFixedSize(400, 250);
 
     this->networkWidget = new NetworkSettings(this);
 

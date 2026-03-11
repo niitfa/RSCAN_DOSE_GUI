@@ -32,7 +32,7 @@ class TCPClient
 	TCPSocketState socketState = TCPSocketState::Opening;
 	std::string ip;
 	uint16_t port;	
-	int sockfd;
+	int sockfd = 0;
 	struct sockaddr_in serverAddress;
 	const struct timeval timeout = { 0, 500 * 1000 };
 	std::atomic<bool> connected { false };
@@ -60,7 +60,7 @@ public:
     void setCPUs(std::vector<int> cpus);
     void setIP(std::string ip);
     void setPort(uint16_t port);
-    void setMessageReceivedCallback(std::function<void ()>&);
+    void setMessageReceivedCallback(std::function<void ()>);
 
     // control
 	void start();

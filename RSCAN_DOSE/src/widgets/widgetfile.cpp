@@ -7,7 +7,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     // internal frame voltage value
     ui->frame_borderInternal->setStyleSheet(
                 " QFrame { background-color: rgb(247,247,247); } "
@@ -47,7 +46,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     headFont.setPixelSize(16);
     headFont.setWeight(50);
 
-    QString headTextColor = "color: black;";
+    QString headTextColor = "color: rgb(70,70,70);";
     ui->label_headText->clear();
     ui->label_headText->setStyleSheet(
                 "border-width:0px;" +
@@ -146,6 +145,10 @@ void WidgetFile::setStartStyle(QPushButton *button)
                 "QPushButton:hover { background-color: rgb(40,100,200);  }"
                 // pressed
                 "QPushButton:pressed { background-color: rgb(30,80,170);  }"
+
+                // disabled
+                "QPushButton:disabled { border-width:0px;  }"
+                "QPushButton:disabled { background-color: rgb(200,200,200);  }"
                 ); // Start */
     button->setFocusPolicy( Qt::FocusPolicy::NoFocus );
 }

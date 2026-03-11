@@ -30,6 +30,7 @@ private:
     void setStopStyle(QPushButton*);
 
 private:
+
     bool started = 0;
     Ui::WidgetFile *ui;
     QFont buttonsFont;

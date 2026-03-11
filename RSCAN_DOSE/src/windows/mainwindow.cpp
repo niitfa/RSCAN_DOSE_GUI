@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupVoltageWidgets();
     setupSensitivityWidgets();
     setupDisplayWidgets();
+    setupChannelLabels();
 
     disableMainWindow();
 }
@@ -39,8 +40,12 @@ void MainWindow::enableMainWindow()
     ui->widget_sensitivityB->setEnabled(1);
     ui->widget_voltageB->setEnabled(1);
     ui->widget_voltageDisplayB->setEnabled(1);
+    // labels
+    ui->widget_headA->setEnabled(1);
+    ui->widget_headB->setEnabled(1);
     // other
     ui->widget_temperatureDisplay->setEnabled(1);
+    ui->widget_file->setEnabled(1);
 
 }
 
@@ -54,8 +59,12 @@ void MainWindow::disableMainWindow()
     ui->widget_sensitivityB->setDisabled(1);
     ui->widget_voltageB->setDisabled(1);
     ui->widget_voltageDisplayB->setDisabled(1);
+    // labels
+    ui->widget_headA->setDisabled(1);
+    ui->widget_headB->setDisabled(1);
     // other
     ui->widget_temperatureDisplay->setDisabled(1);
+    ui->widget_file->setDisabled(1);
 }
 
 void MainWindow::updateWindowData()
@@ -178,6 +187,12 @@ void MainWindow::setupDisplayWidgets()
     // temperature
     ui->widget_temperatureDisplay->setHeadText("Температура, ℃:");
 
+}
+
+void MainWindow::setupChannelLabels()
+{
+    ui->widget_headA->setText("A");
+    ui->widget_headB->setText("B");
 }
 
 void MainWindow::on_pushButton_settings_clicked()

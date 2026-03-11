@@ -84,7 +84,7 @@ void TCPClient::setPort(uint16_t port)
     this->port = port;
 }
 
-void TCPClient::setMessageReceivedCallback(std::function<void ()> &f)
+void TCPClient::setMessageReceivedCallback(std::function<void ()>f)
 {
     this->messageReceivedCallback = f;
 }
@@ -218,7 +218,7 @@ int TCPClient::openSocket()
         std::cout << "TCP client: " << getCurrentTimeStr()
             << " opening socket " << this->ip << ":" << this->port << std::endl;
 	}
-    return socket( AF_INET, SOCK_STREAM, 0 );
+    return (this->sockfd = socket( AF_INET, SOCK_STREAM, 0 ));
 }
 
 void TCPClient::closeSocket()

@@ -29,6 +29,7 @@ private:
     void setupVoltageWidgets();
     void setupSensitivityWidgets();
     void setupDisplayWidgets();
+    void setupChannelLabels();
 
 private:
     Ui::MainWindow *ui;

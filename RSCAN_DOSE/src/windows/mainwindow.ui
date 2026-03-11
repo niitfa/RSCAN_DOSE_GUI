@@ -6,41 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>735</width>
-    <height>795</height>
+    <width>1849</width>
+    <height>1332</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="WidgetVoltage" name="widget_voltageA" native="true">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>281</width>
-      <height>211</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="WidgetSensitivity" name="widget_sensitivityA" native="true">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>300</y>
-      <width>271</width>
-      <height>111</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>0</y>
-      <width>241</width>
-      <height>42</height>
+      <x>740</x>
+      <y>100</y>
+      <width>271</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -116,55 +96,189 @@
      </item>
     </layout>
    </widget>
-   <widget class="WidgetValue" name="widget_voltageDisplayA" native="true">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>410</y>
-      <width>271</width>
-      <height>121</height>
+      <x>20</x>
+      <y>100</y>
+      <width>702</width>
+      <height>1031</height>
      </rect>
     </property>
-   </widget>
-   <widget class="WidgetValue" name="widget_temperatureDisplay" native="true">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>530</y>
-      <width>191</width>
-      <height>111</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="WidgetVoltage" name="widget_voltageB" native="true">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>90</y>
-      <width>291</width>
-      <height>211</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="WidgetSensitivity" name="widget_sensitivityB" native="true">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>300</y>
-      <width>291</width>
-      <height>111</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="WidgetValue" name="widget_voltageDisplayB" native="true">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>410</y>
-      <width>281</width>
-      <height>111</height>
-     </rect>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="WidgetText" name="widget_headA" native="true"/>
+       </item>
+       <item>
+        <widget class="WidgetText" name="widget_headB" native="true"/>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>30</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="WidgetVoltage" name="widget_voltageA" native="true"/>
+       </item>
+       <item>
+        <widget class="WidgetVoltage" name="widget_voltageB" native="true"/>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>150</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="WidgetSensitivity" name="widget_sensitivityA" native="true"/>
+       </item>
+       <item>
+        <widget class="WidgetSensitivity" name="widget_sensitivityB" native="true"/>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>150</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="WidgetValue" name="widget_voltageDisplayA" native="true"/>
+       </item>
+       <item>
+        <widget class="WidgetValue" name="widget_voltageDisplayB" native="true"/>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>100</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>700</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="WidgetFile" name="widget_file" native="true"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="WidgetValue" name="widget_temperatureDisplay" native="true"/>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>80</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -172,8 +286,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>735</width>
-     <height>24</height>
+     <width>1849</width>
+     <height>33</height>
     </rect>
    </property>
   </widget>
@@ -211,6 +325,18 @@
    <class>WidgetValue</class>
    <extends>QWidget</extends>
    <header>widgetvalue.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WidgetFile</class>
+   <extends>QWidget</extends>
+   <header>widgetfile.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WidgetText</class>
+   <extends>QWidget</extends>
+   <header>widgettext.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
