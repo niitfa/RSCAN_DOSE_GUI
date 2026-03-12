@@ -5,9 +5,10 @@
 #include <QtMath>
 #include <QVector>
 #include <QTime>
+#include <QFont>
+#include <QColor>
 #include "qcustomplot.h"
 #include <thread>
-#include "graphdataupdater.h"
 
 namespace Ui {
 class QGraph;
@@ -37,7 +38,7 @@ public:
     void showAllGraphs();
     void hideAllGraphs();
 
-    static const int numberOfGraphs = 16;
+    static const int numberOfGraphs = 2;
 private:
     QVector<QCPPlottableLegendItem> savedLegendItems;
 
@@ -47,7 +48,6 @@ private:
 
     QVector<QVector<double>> yVec;
     QVector<double> tVec;
-    GraphDataUpdater* dataUpdater = nullptr;
 
     // t axis
     double tFilled = 0.85; // (0, 1]
@@ -65,6 +65,7 @@ private:
     void removeGraph();
     void replot();
     void clearGraph();
+    void setupStyles();
 
     // vector op
     void yVecPushBack(const QVector<double>&);

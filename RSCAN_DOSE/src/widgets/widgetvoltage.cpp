@@ -155,18 +155,15 @@ void WidgetVoltage::setupChangeVoltageButton()
 void WidgetVoltage::setupLineEditVoltage()
 {
     // label Voltage value measurements
-    QString textColor = "color: rgb(30,30,30);";
     ui->label_value->setStyleSheet(
-                "border-width:0px;" +
-                textColor
+                "border-width:0px;"
                 );
     ui->label_value->setFont(buttonsFont);
     ui->label_value->setText("В");
 
     // line edit voltage input
     ui->lineEdit_voltageInput->setStyleSheet(
-                "border-width:0px;" +
-                textColor
+                "border-width:0px;"
                 );
     ui->lineEdit_voltageInput->setFont(buttonsFont);
     ui->lineEdit_voltageInput->setText(QString::number(0));
@@ -196,6 +193,7 @@ void WidgetVoltage::setActiveWidgetsEnabled(bool enabled)
 {
     ui->pushButton_changeVoltage->setEnabled(enabled);
     ui->lineEdit_voltageInput->setEnabled(enabled);
+    ui->label_value->setEnabled(enabled);
     ui->pushButton_minus->setEnabled(enabled);
     ui->pushButton_plus->setEnabled(enabled);
 }
@@ -289,7 +287,6 @@ void WidgetVoltage::setValueCodes(
     this->getHVEnabledCode = getHVEnabledCode;
 }
 
-#include <iostream>
 void WidgetVoltage::setEnabled(bool enabled)
 {
     QWidget::setEnabled(enabled);

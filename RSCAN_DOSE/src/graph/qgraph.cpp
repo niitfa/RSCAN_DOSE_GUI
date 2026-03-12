@@ -8,20 +8,17 @@ QGraph::QGraph(QWidget *parent) :
 {
     connect(this, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
     ui->setupUi(this);
-    this->QCustomPlot::xAxis->setLabel("Время, c");
-    this->QCustomPlot::yAxis->setLabel("Сигнал, ед.");
+    this->setupStyles();
     this->setupGraph();
 
     // init data
     this->yVec = QVector<QVector<double>>(numberOfGraphs);
-    this->dataUpdater = new GraphDataUpdater(&this->yVec);
-
     this->QCustomPlot::legend->setVisible(true);
+    hideAllGraphs();
 }
 
 QGraph::~QGraph()
 {
-    delete dataUpdater;
     delete ui;
 }
 
@@ -57,21 +54,14 @@ void QGraph::update(const QVector<double>& data)
         int msecs_elapsed = timer.restart();
         double secs_elapsed = static_cast<double>(msecs_elapsed) / 1000;
         this->updateTimeVector(secs_elapsed);
-
-        // thread
-        if(this->dataUpdater) { dataUpdater->push(data); }
-        //this->yVecPushBack(data);
+        this->yVecPushBack(data);
 
         while(this->isLimitTimeExceeded())
         {
             tMin += secs_elapsed;
             tMax += secs_elapsed;
             this->tVec.pop_front();
-
-            // thread
-            if(this->dataUpdater) { dataUpdater->pop(); }
-            //this->yVecPopFront();
-
+            this->yVecPopFront();
             this->setTAxisRange(tMin, tMax);
         }
         this->QGraph::replot();
@@ -124,8 +114,6 @@ void QGraph::setEnabled(bool enabled)
         if(!this->enabled)
         {
             this->resetData();
-            //this->removeGraph();
-            //this->setupGraph();
         }
     }
     this->enabled = enabled;
@@ -161,38 +149,34 @@ void QGraph::setupGraph()
 {
     QPen pen;
     QVector<QColor> colors = QVector<QColor>({
-                    QColor(0x8B, 0x45, 0x13), // 0:0
-                    QColor(0xFF, 0x00, 0x00), // 0:1
-                    QColor(0xFF, 0x8C, 0x00), // 0:2
-                    QColor(0xBC, 0x8F, 0x8F), // 0:3
-
-                    QColor(0x00, 0x00, 0x8B), // 1:0
-                    QColor(0x46, 0x82, 0xB4), // 1:1
-                    QColor(0x4B, 0x00, 0x82), // 1:2
-                    QColor(0xC7, 0x15, 0x85), // 1:3
-
-                    QColor(0x00, 0x64, 0x00), // 2:0
-                    QColor(0x2F, 0x4F, 0x4F), // 2:1
-                    QColor(0x9A, 0xCD, 0x32), // 2:2
-                    QColor(0x00, 0x80, 0x80), // 2:3
-
-                    QColor(0x00, 0x00, 0xFF), // 3:0
-                    QColor(0xC0, 0xC0, 0xC0), // 3:1
-                    QColor(0x69, 0x69, 0x69), // 3:2
-                    QColor(0x10, 0x10, 0x10), // 3:3
-
+                    QColor(0x00, 0x66, 0x00), // 0:0
+                    QColor(0x00, 0x66, 0xCC), // 0:1
                });
 
-    for(int i = 0; i < this->numberOfGraphs; i++)
+    /*for(int i = 0; i < this->numberOfGraphs; i++)
     {
         this->QCustomPlot::addGraph();
         pen.setColor(colors[i]);
-        pen.setWidth(1);
+        pen.setWidth(3);
         this->QCustomPlot::graph(i)->setPen(pen);
         this->QCustomPlot::graph(i)->setName(
                     QString::number(i / 4) + ":" + QString::number(i % 4)
                     );
-    }
+    } */
+
+    pen.setWidth(3);
+
+    this->QCustomPlot::addGraph();
+    pen.setColor(colors[0]);
+    this->QCustomPlot::graph(0)->setPen(pen);
+    this->QCustomPlot::graph(0)->setName("Канал A");
+
+    this->QCustomPlot::addGraph();
+    pen.setColor(colors[1]);
+    this->QCustomPlot::graph(1)->setPen(pen);
+    this->QCustomPlot::graph(1)->setName("Канал B");
+
+
 }
 
 void QGraph::removeGraph()
@@ -221,6 +205,23 @@ void QGraph::clearGraph()
         this->QCustomPlot::graph(i)->data()->clear(); // !!
         this->QCustomPlot::replot();
     }
+}
+
+void QGraph::setupStyles()
+{
+    QFont font;
+    font.setFamily("Inter");
+    font.setPixelSize(15);
+    font.setWeight(50);
+
+    // labels
+    this->QCustomPlot::xAxis->setLabel("Время, c");
+    this->QCustomPlot::xAxis->setLabelFont(font);
+    this->QCustomPlot::yAxis->setLabel("Сигнал, ед.");
+    this->QCustomPlot::yAxis->setLabelFont(font);
+
+    // background
+    this->QCustomPlot::setBackground(QBrush(QColor("#f8f8f8")));
 }
 
 void QGraph::yVecPushBack(const QVector<double>& data)

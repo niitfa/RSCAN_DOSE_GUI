@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QString>
-#include "qgraph.h"
 
 namespace Ui {
 class WidgetValue;
@@ -26,10 +25,6 @@ public:
 
 private:
     Ui::WidgetValue *ui;
-
-    QGraph* qgraph = nullptr;
-    int graphIndex = 0;
-    static const int lineLength = 4;
     QString enabledColorText;
     QString disabledColorText;
 private:

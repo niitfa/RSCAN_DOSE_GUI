@@ -41,10 +41,36 @@ void WidgetText::setupFont()
                 "border-width:0px;"
                 "color: rgb(50,70,100);"
             );
+    this->enabledColorText =  "color: rgb(50,70,100);";
+    this->disabledColorText = "color: rgb(130,130,130);";
 }
 
 void WidgetText::setText(const QString &text)
 {
     ui->label->setText(text);
+}
+
+void WidgetText::setEnabled(bool enabled)
+{
+    QWidget::setEnabled(enabled);
+    if(enabled)
+    {
+        ui->label->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+            );
+
+    }
+    else
+    {
+        ui->label->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+            );
+    }
+}
+void WidgetText::setDisabled(bool disabled)
+{
+    this->WidgetText::setEnabled(!disabled);    
 }
 

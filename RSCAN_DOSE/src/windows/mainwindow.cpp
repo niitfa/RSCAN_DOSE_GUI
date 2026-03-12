@@ -14,13 +14,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle("RSCAN DOSE");
+    setupChannelLabels();
     setupClient();
     setupSettingsButton();
     setupConnectWidget();
     setupVoltageWidgets();
     setupSensitivityWidgets();
     setupDisplayWidgets();
-    setupChannelLabels();
+    setupSignalWidgets();
+    setupTimer();
 
     disableMainWindow();
 }
@@ -36,17 +38,21 @@ void MainWindow::enableMainWindow()
     ui->widget_sensitivityA->setEnabled(1);
     ui->widget_voltageA->setEnabled(1);
     ui->widget_voltageDisplayA->setEnabled(1);
+    ui->widget_signalA->setEnabled(1);
     // channel B
     ui->widget_sensitivityB->setEnabled(1);
     ui->widget_voltageB->setEnabled(1);
     ui->widget_voltageDisplayB->setEnabled(1);
+    ui->widget_signalB->setEnabled(1);
     // labels
     ui->widget_headA->setEnabled(1);
     ui->widget_headB->setEnabled(1);
     // other
     ui->widget_temperatureDisplay->setEnabled(1);
     ui->widget_file->setEnabled(1);
-
+    ui->widget_graph->setEnabled(1);
+    // timer
+    graphTimer->start();
 }
 
 void MainWindow::disableMainWindow()
@@ -55,28 +61,67 @@ void MainWindow::disableMainWindow()
     ui->widget_sensitivityA->setDisabled(1);
     ui->widget_voltageA->setDisabled(1);
     ui->widget_voltageDisplayA->setDisabled(1);
+    ui->widget_signalA->setDisabled(1);
     // channel B
     ui->widget_sensitivityB->setDisabled(1);
     ui->widget_voltageB->setDisabled(1);
     ui->widget_voltageDisplayB->setDisabled(1);
+    ui->widget_signalB->setDisabled(1);
     // labels
     ui->widget_headA->setDisabled(1);
     ui->widget_headB->setDisabled(1);
     // other
     ui->widget_temperatureDisplay->setDisabled(1);
     ui->widget_file->setDisabled(1);
+    ui->widget_graph->setDisabled(1);
+    // timer
+    graphTimer->stop();
 }
 
 void MainWindow::updateWindowData()
 {
     if(client)
     {
+        // signal A
+        ui->widget_signalA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_A)));
+        // signal B
+        ui->widget_signalB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_B)));
         // voltage A
         ui->widget_voltageDisplayA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_A)));
         // voltage B
         ui->widget_voltageDisplayB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_B)));
         // temperature
         ui->widget_temperatureDisplay->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Temp_A)));
+    }
+}
+
+#include <iostream>
+void MainWindow::showGraph(int graphNo, bool flag)
+{
+    ui->widget_graph->setLineVisible(graphNo, flag);
+}
+
+void MainWindow::showGraphA(bool flag)
+{
+     showGraph(0, flag);
+}
+
+void MainWindow::showGraphB(bool flag)
+{
+    showGraph(1, flag);
+}
+
+void MainWindow::updateGraph()
+{
+    int msgNum = client->readValue(RSCANDoseValueCode::Message_Num);
+    if(msgNum != id)
+    {
+        id = msgNum;
+        QVector<double> data{
+            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_A) ),
+            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_B) )
+         };
+        ui->widget_graph->pushData(data);
     }
 }
 
@@ -154,7 +199,6 @@ void MainWindow::setupVoltageWidgets()
                 RSCANDoseValueCode::HV_Polarity_B,
                 RSCANDoseValueCode::HV_Enabled_B
                 );
-
 }
 
 void MainWindow::setupSensitivityWidgets()
@@ -186,7 +230,26 @@ void MainWindow::setupDisplayWidgets()
     ui->widget_voltageDisplayB->setHeadText("Напряжение (B), В:");
     // temperature
     ui->widget_temperatureDisplay->setHeadText("Температура, ℃:");
+}
 
+void MainWindow::setupSignalWidgets()
+{
+    std::function<void(bool)> showGraphACallback(std::bind(&MainWindow::showGraphA, this, std::placeholders::_1));
+    std::function<void(bool)> showGraphBCallback(std::bind(&MainWindow::showGraphB, this, std::placeholders::_1));
+
+    ui->widget_signalA->setHeadText("Сигнал (A), ед:");
+    ui->widget_signalA->setCheckedCallback(showGraphACallback);
+    ui->widget_signalA->setChecked(true);
+    ui->widget_signalB->setHeadText("Сигнал (B), ед:");
+    ui->widget_signalB->setCheckedCallback(showGraphBCallback);
+    ui->widget_signalB->setChecked(true);
+}
+
+void MainWindow::setupTimer()
+{
+    graphTimer->setSingleShot(false);
+    graphTimer->setInterval(this->graphInterval_ms);
+    QObject::connect(graphTimer, SIGNAL(timeout()), this, SLOT(updateGraph()));
 }
 
 void MainWindow::setupChannelLabels()

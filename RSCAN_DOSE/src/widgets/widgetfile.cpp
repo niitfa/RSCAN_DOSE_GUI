@@ -176,7 +176,6 @@ void WidgetFile::setStopStyle(QPushButton *button)
                 "QPushButton:pressed { background-color: rgb(30,80,170);  }"
                 ); // Start */
     button->setFocusPolicy( Qt::FocusPolicy::NoFocus );
-
 }
 
 void WidgetFile::on_pushButton_start_clicked()

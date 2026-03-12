@@ -1,15 +1,15 @@
-#include "widgetvalue.h"
-#include "ui_widgetvalue.h"
+#include "widgetvaluechecked.h"
+#include "ui_widgetvaluechecked.h"
 
-WidgetValue::WidgetValue(QWidget *parent) :
+WidgetValueChecked::WidgetValueChecked(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::WidgetValue)
+    ui(new Ui::WidgetValueChecked)
 {
     ui->setupUi(this);
 
     setValueText("0");
     setHeadText("Description, unit");
-    
+
     QFont headFont;
     headFont.setFamily("Inter");
     headFont.setPixelSize(16);
@@ -19,8 +19,8 @@ WidgetValue::WidgetValue(QWidget *parent) :
     valueFont.setFamily("Inter");
     valueFont.setPixelSize(40); // 28
     valueFont.setWeight(60);
-
-    // border
+    
+        // border
     ui->frame_border->setStyleSheet(
                 //" QFrame { background-color: white; } "
                 " QFrame { background-color: rgb(247,247,247); } "
@@ -42,26 +42,41 @@ WidgetValue::WidgetValue(QWidget *parent) :
     ui->label_head->setFont(headFont);
     // value text
     ui->label_value->setFont(valueFont);
+    // check box text
+    ui->checkBox->setFont(headFont);
+    ui->checkBox->setText("График");
     // init style
-    this->WidgetValue::setEnabled(true);
+    this->WidgetValueChecked::setEnabled(true);
+    
 }
 
-WidgetValue::~WidgetValue()
+WidgetValueChecked::~WidgetValueChecked()
 {
     delete ui;
 }
 
-void WidgetValue::setHeadText(QString qstr)
+void WidgetValueChecked::setHeadText(QString qstr)
 {
     ui->label_head->setText(qstr);
 }
 
-void WidgetValue::setValueText(QString qstr)
+void WidgetValueChecked::setValueText(QString qstr)
 {
     ui->label_value->setText(qstr);
 }
 
-void WidgetValue::setEnabled(bool enabled)
+void WidgetValueChecked::setCheckedCallback(std::function<void (bool)> cb)
+{
+    this->checkedCallback = cb;
+}
+
+void WidgetValueChecked::setChecked(bool checked)
+{
+    ui->checkBox->setChecked(checked);
+    checkedCallback(checked);
+}
+
+void WidgetValueChecked::setEnabled(bool enabled)
 {
     QWidget::setEnabled(enabled);
     if(enabled)
@@ -71,6 +86,10 @@ void WidgetValue::setEnabled(bool enabled)
             this->enabledColorText
         );
         ui->label_value->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+        );
+        ui->checkBox->setStyleSheet(
             "border-width:0px;" +
             this->enabledColorText
         );
@@ -85,9 +104,19 @@ void WidgetValue::setEnabled(bool enabled)
             "border-width:0px;" +
             this->disabledColorText
         );
+        ui->checkBox->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+        );
     }
 }
-void WidgetValue::setDisabled(bool disabled)
+
+void WidgetValueChecked::setDisabled(bool disabled)
 {
-    this->WidgetValue::setEnabled(!disabled);    
+    this->WidgetValueChecked::setEnabled(!disabled);
+}
+
+void WidgetValueChecked::on_checkBox_clicked()
+{
+    checkedCallback(ui->checkBox->isChecked());
 }
