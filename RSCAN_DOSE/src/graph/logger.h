@@ -8,35 +8,45 @@
 #include <QDate>
 #include <QVector>
 
-class ScanSessionFile
+class Logger
 {
     QString filepath;
     QFile* file = nullptr;
 
     // special - regular
     uint32_t  id = 0;
+    int signalA = 0;
+    int signalB = 0;
+    int voltageA = 0;
+    int voltageB = 0;
+    int polarityA = 0;
+    int polarityB = 0;
+    int sensitivityA = 0;
+    int sensitivityB = 0;
+    int hvEnabledA = 0;
+    int hvEnabledB = 0;
+    int temperature = 0;
 
     // other
-    QString filename = "rscan_mx";
-    QVector<uint16_t> vec = QVector<uint16_t>(vecSize);
-
+    QString filename = "rscan_dose";
 public:
-    ScanSessionFile();
-    ~ScanSessionFile();
-
-    static const int vecSize = 16;
-    static const int mxLineLength = 4;
+    Logger();
+    ~Logger();
 
     bool start();
     void update();
     void stop();
 
     void setFilename(QString);
-    void setData(int index, uint16_t data);
-    // title
 
     // regular
     void setID(uint32_t id);
+    void setSignals(int A, int B);
+    void setVoltages(int A, int B);
+    void setPolarities(int A, int B);
+    void setSensitivities(int A, int B);
+    void setHVEnabled(int A, int B);
+    void setTemperature(int temp);
 
 private:
     QString getFolderPath();

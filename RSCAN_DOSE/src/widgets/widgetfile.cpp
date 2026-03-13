@@ -100,14 +100,19 @@ WidgetFile::~WidgetFile()
     delete ui;
 }
 
-void WidgetFile::setSession(ScanSessionFile *session)
+void WidgetFile::setLogger(Logger *l)
 {
-    this->session = session;
+    this->logger = l;
 }
 
-ScanSessionFile *WidgetFile::getSession()
+Logger *WidgetFile::getLogger()
 {
-    return this->session;
+    return this->logger;
+}
+
+void WidgetFile::setStartLoggingCallback(std::function<void ()> cb)
+{
+    startLoggingCallback = cb;
 }
 
 void WidgetFile::on_lineEdit_periodInput_editingFinished()
@@ -178,16 +183,17 @@ void WidgetFile::setStopStyle(QPushButton *button)
     button->setFocusPolicy( Qt::FocusPolicy::NoFocus );
 }
 
+#include <iostream>
 void WidgetFile::on_pushButton_start_clicked()
 {
-    if(this->session)
+    if(this->logger)
     {
         if(this->started)
         {
             ui->lineEdit_periodInput->setEnabled(1);
             ui->lineEdit_filename->setEnabled(1);
             setStartStyle(ui->pushButton_start);
-            session->stop();
+            logger->stop();
             this->started = 0;
         }
         else
@@ -195,15 +201,16 @@ void WidgetFile::on_pushButton_start_clicked()
             // set filename
             if(ui->lineEdit_filename->text().isEmpty())
             {
-                session->setFilename(this->defaultFilename);
+                logger->setFilename(this->defaultFilename);
                 ui->lineEdit_filename->setText(this->defaultFilename);
             }
             {
-                session->setFilename(ui->lineEdit_filename->text());
+                logger->setFilename(ui->lineEdit_filename->text());
             }
 
             // start
-            if(session->start())
+            startLoggingCallback();
+            if(logger->start())
             {
                 this->pointIndex = 0;
                 this->started = 1;
@@ -216,15 +223,15 @@ void WidgetFile::on_pushButton_start_clicked()
     }
 }
 
-void WidgetFile::update(uint32_t id)
+void WidgetFile::update(int id)
 {
     if(this->pointIndex < (id / this->fileUpdatePeriod))
     {
         this->pointIndex = id / this->fileUpdatePeriod;
-        if(this->session)
+        if(this->logger)
         {
-            this->session->setID(id);
-            this->session->update();
+            this->logger->setID(id);
+            this->logger->update();
         }
     }
 }

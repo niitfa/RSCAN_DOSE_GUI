@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupSensitivityWidgets();
     setupDisplayWidgets();
     setupSignalWidgets();
+    setupLoggerWidget();
     setupTimer();
 
     disableMainWindow();
@@ -92,6 +93,13 @@ void MainWindow::updateWindowData()
         ui->widget_voltageDisplayB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_B)));
         // temperature
         ui->widget_temperatureDisplay->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Temp_A)));
+
+        if(ui->widget_file->getLogger())
+        {
+            updateLoggerData();
+            ui->widget_file->update(client->readValue(RSCANDoseValueCode::Message_Num));
+        }
+
     }
 }
 
@@ -245,11 +253,55 @@ void MainWindow::setupSignalWidgets()
     ui->widget_signalB->setChecked(true);
 }
 
+void MainWindow::setupLoggerWidget()
+{
+    ui->widget_file->setLogger(new Logger);
+
+    std::function<void(void)> startLoggingCallback (std::bind(&MainWindow::updateLoggerData, this));
+    ui->widget_file->setStartLoggingCallback(startLoggingCallback);
+}
+
 void MainWindow::setupTimer()
 {
     graphTimer->setSingleShot(false);
     graphTimer->setInterval(this->graphInterval_ms);
     QObject::connect(graphTimer, SIGNAL(timeout()), this, SLOT(updateGraph()));
+}
+
+void MainWindow::updateLoggerData()
+{
+    Logger* logger = ui->widget_file->getLogger();
+    if(logger && client)
+    {
+        logger->setSignals(
+                    client->readValue(RSCANDoseValueCode::Dose_A),
+                    client->readValue(RSCANDoseValueCode::Dose_B)
+                    );
+        logger->setVoltages(
+                    client->readValue(RSCANDoseValueCode::HV_A),
+                    client->readValue(RSCANDoseValueCode::HV_B)
+                    );
+        logger->setPolarities(
+                    client->readValue(RSCANDoseValueCode::HV_Polarity_A),
+                    client->readValue(RSCANDoseValueCode::HV_Polarity_B)
+                    );
+
+        logger->setSensitivities(
+                    client->readValue(RSCANDoseValueCode::Sensitivity_A),
+                    client->readValue(RSCANDoseValueCode::Sensitivity_B)
+                    );
+        logger->setHVEnabled(
+                    client->readValue(RSCANDoseValueCode::HV_Enabled_A),
+                    client->readValue(RSCANDoseValueCode::HV_Enabled_B)
+                    );
+        logger->setHVEnabled(
+                    client->readValue(RSCANDoseValueCode::HV_Enabled_A),
+                    client->readValue(RSCANDoseValueCode::HV_Enabled_B)
+                    );
+        logger->setTemperature(
+                    client->readValue(RSCANDoseValueCode::Temp_A)
+                    );
+    }
 }
 
 void MainWindow::setupChannelLabels()

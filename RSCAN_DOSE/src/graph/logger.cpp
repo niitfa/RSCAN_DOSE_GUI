@@ -1,19 +1,19 @@
-#include "scansessionfile.h"
+#include "logger.h"
 #include <QDate>
 #include <QTime>
 #include <QtMath>
 #include <QTextStream>
 #include <iostream>
 
-ScanSessionFile::ScanSessionFile()
+Logger::Logger()
 {
 }
 
-ScanSessionFile::~ScanSessionFile()
+Logger::~Logger()
 {
 }
 
-bool ScanSessionFile::start()
+bool Logger::start()
 {
     // create filepath
     this->filepath = this->getFolderPath();
@@ -37,7 +37,7 @@ bool ScanSessionFile::start()
     return false;
 }
 
-void ScanSessionFile::update()
+void Logger::update()
 {
     if(this->file)
     {
@@ -45,7 +45,7 @@ void ScanSessionFile::update()
     }
 }
 
-void ScanSessionFile::stop()
+void Logger::stop()
 {
     // clear
     this->file->close();
@@ -53,33 +53,60 @@ void ScanSessionFile::stop()
     this->file = nullptr;
 }
 
-void ScanSessionFile::setFilename(QString filename)
+void Logger::setFilename(QString filename)
 {
     this->filename = filename;
 }
 
-void ScanSessionFile::setData(int index, uint16_t data)
-{
-    if(index >= 0 && index < this->vecSize)
-    {
-        this->vec[index] = data;
-    }
-}
-
-void ScanSessionFile::setID(uint32_t id)
+void Logger::setID(uint32_t id)
 {
     this->id = id;
 }
 
+void Logger::setSignals(int A, int B)
+{
+    signalA = A;
+    signalB = B;
+}
+
+void Logger::setVoltages(int A, int B)
+{
+    voltageA = A;
+    voltageB = B;
+}
+
+void Logger::setPolarities(int A, int B)
+{
+    polarityA = A;
+    polarityB = B;
+}
+
+void Logger::setSensitivities(int A, int B)
+{
+    sensitivityA = A;
+    sensitivityB = B;
+}
+
+void Logger::setHVEnabled(int A, int B)
+{
+    hvEnabledA = A;
+    hvEnabledB = B;
+}
+
+void Logger::setTemperature(int temp)
+{
+    temperature = temp;
+}
+
 // private
-QString ScanSessionFile::getFolderPath()
+QString Logger::getFolderPath()
 {
     QString path = QDir::currentPath();
-    path += "/RSCAN_MX_SESSIONS/" + this->createCurrentTimeStr() + "_" + filename + "/";
+    path += "/RSCAN_DOSE_SESSIONS/" + this->createCurrentTimeStr() + "_" + filename + "/";
     return path;
 }
 
-QString ScanSessionFile::createCurrentTimeStr()
+QString Logger::createCurrentTimeStr()
 {
     QDate date = QDate::currentDate();
     QTime time = QTime::currentTime();
@@ -99,7 +126,7 @@ QString ScanSessionFile::createCurrentTimeStr()
     return str;
 }
 
-QString ScanSessionFile::QStringFromInt(int num, int numMinimumLength)
+QString Logger::QStringFromInt(int num, int numMinimumLength)
 {
     if(numMinimumLength)
     {
@@ -122,30 +149,34 @@ QString ScanSessionFile::QStringFromInt(int num, int numMinimumLength)
     return QString::number(num);
 }
 
-void ScanSessionFile::printHeadText(QFile* f)
+void Logger::printHeadText(QFile* f)
 {
     QTextStream stream(f);
     stream << "Date," <<  getDateStringFile() << endl;
     stream << "Time," <<  getTimeStringFile() << endl;
-    stream << "Size," <<  this->vecSize << endl;
+
+    stream << endl;
+
+    stream << "Channel," << "A," << "B," << endl;
+    stream << "Enabled," << (hvEnabledA ? "Yes," : "No,") << (hvEnabledB ? "Yes," : "No,")<< endl;
+    stream << "Voltage (V)," << voltageA << "," <<  voltageB << "," << endl;
+    stream << "Polarity," << (polarityA ? "-," : "+,") << (polarityB ? "-," : "+,") << endl;
+    stream << "Sensitivity," << (sensitivityA ? "High," : "Low,") << (sensitivityB ? "High," : "Low,") << endl;
+
     stream << endl;
 
 }
 
-void ScanSessionFile::printValuesDescription(QFile *f)
+void Logger::printValuesDescription(QFile *f)
 {
     QTextStream stream(f);
-    stream << "Time," << "Date," << "ID,";
-
-    for(int i = 0; i < this->vecSize; i++)
-    {
-        stream << QString::number(i / mxLineLength) + ":" +
-                  QString::number(i % mxLineLength) + ",";
-    }
+    stream << "Time," << "Date," << "ID," << "Enabled A," << "Signal A," << "Voltage A (V)," << "Polarity A," << "Sensitivity A,"
+                                          << "Enabled B," << "Signal B," << "Voltage B (V)," << "Polarity B," << "Sensitivity B,"
+                                          << "Temperature (℃)";
     stream << endl;
 }
 
-void ScanSessionFile::printReqularData(QFile *f)
+void Logger::printReqularData(QFile *f)
 {
     QTextStream stream(f);
 
@@ -153,17 +184,24 @@ void ScanSessionFile::printReqularData(QFile *f)
     stream <<
               getTimeStringFile() << "," <<
               getDateStringFile() << "," <<
-              QString::number(id) << ",";
+              QString::number(id) << "," <<
 
-    for(int i = 0; i < this->vecSize; i++)
-    {
-        stream << QString::number(this->vec.at(i)) + ",";
-    }
+              (hvEnabledA ? "Yes," : "No,") <<
+              signalA << "," <<
+              voltageA << "," <<
+              (polarityA ? "-," : "+,") <<
+              (sensitivityA ? "High," : "Low,") <<
 
-    stream << endl;
+              (hvEnabledB ? "Yes," : "No,") <<
+              signalB << "," <<
+              voltageB << "," <<
+              (polarityB ? "-," : "+,") <<
+              (sensitivityB ? "High," : "Low,") <<
+
+              temperature << "," << endl;
 }
 
-QString ScanSessionFile::getTimeStringFile()
+QString Logger::getTimeStringFile()
 {
     QTime time = QTime::currentTime();
 
@@ -178,7 +216,7 @@ QString ScanSessionFile::getTimeStringFile()
     return str;
 }
 
-QString ScanSessionFile::getDateStringFile()
+QString Logger::getDateStringFile()
 {
     QDate date = QDate::currentDate();
 

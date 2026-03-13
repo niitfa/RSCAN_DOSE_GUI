@@ -275,7 +275,7 @@ void WidgetGraph::setupGraph()
 
     ui->frame_border->setStyleSheet(
                 " QFrame { background-color: rgb(247,247,247); } "
-                " QFrame { border-radius:15px; }"
+                " QFrame { border-radius:30px; }"
                 " QFrame { border-style: outset; }"
                 " QFrame { border-width:1px; }"
                 " QFrame { border-color:rgb(150,150,150); }"

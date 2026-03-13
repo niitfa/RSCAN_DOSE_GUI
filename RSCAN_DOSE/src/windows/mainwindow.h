@@ -30,6 +30,9 @@ public:
     void showGraphA(bool flag);
     void showGraphB(bool flag);
 
+    // start logger callback
+    void updateLoggerData();
+
 private slots:
     void updateGraph();
     void on_pushButton_settings_clicked();
@@ -42,6 +45,7 @@ private:
     void setupSensitivityWidgets();
     void setupDisplayWidgets();
     void setupSignalWidgets();
+    void setupLoggerWidget();
     void setupTimer();
 
 private:

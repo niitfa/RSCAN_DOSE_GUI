@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QFont>
 #include <QPushButton>
-#include "scansessionfile.h"
+#include <functional>
+#include "logger.h"
 
 namespace Ui {
 class WidgetFile;
@@ -17,9 +18,11 @@ class WidgetFile : public QWidget
 public:
     explicit WidgetFile(QWidget *parent = nullptr);
     ~WidgetFile();
-    void setSession(ScanSessionFile*);
-    ScanSessionFile *getSession();
-    void update(uint32_t id);
+    void setLogger(Logger*);
+    Logger *getLogger();
+    void setStartLoggingCallback(std::function<void()>);
+    void update(int id);
+
 
 private slots:
     void on_lineEdit_periodInput_editingFinished();
@@ -36,8 +39,10 @@ private:
     QFont buttonsFont;
     uint32_t fileUpdatePeriod = 1;
     uint32_t pointIndex = 0;
-    ScanSessionFile* session = nullptr;
+    Logger* logger = nullptr;
     QString defaultFilename = "session";
+
+    std::function<void(void)> startLoggingCallback = [](){};
 };
 
 #endif // WIDGETFILE_H

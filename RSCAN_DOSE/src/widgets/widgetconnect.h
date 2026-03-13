@@ -7,8 +7,6 @@
 #include "rscan_dose_client.h"
 #include "statusled.h"
 
-// autoconnect???
-
 namespace Ui {
 class WidgetConnect;
 }
