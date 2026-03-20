@@ -222,7 +222,7 @@ void WidgetVoltage::setupWidgetsHVEnabled(bool enabled)
 
 void WidgetVoltage::setupWidgetsPolarity(bool polarity)
 {
-    if(polarity) // -
+    if(!polarity) // -
     {
         this->setMinusButtonActive(false);
         this->setPlusButtonActive(true);
@@ -385,7 +385,7 @@ void WidgetVoltage::on_pushButton_plus_clicked()
 {
     if(client)
     {
-        client->sendCommand(this->setPolarityCode, 0);
+        client->sendCommand(this->setPolarityCode, 1);
     }
 }
 
@@ -393,7 +393,7 @@ void WidgetVoltage::on_pushButton_minus_clicked()
 {
     if(client)
     {
-        client->sendCommand(this->setPolarityCode, 1);
+        client->sendCommand(this->setPolarityCode, 0);
     }
 }
 

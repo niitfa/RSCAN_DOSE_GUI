@@ -154,15 +154,12 @@ void Logger::printHeadText(QFile* f)
     QTextStream stream(f);
     stream << "Date," <<  getDateStringFile() << endl;
     stream << "Time," <<  getTimeStringFile() << endl;
-
     stream << endl;
-
     stream << "Channel," << "A," << "B," << endl;
     stream << "Enabled," << (hvEnabledA ? "Yes," : "No,") << (hvEnabledB ? "Yes," : "No,")<< endl;
     stream << "Voltage (V)," << voltageA << "," <<  voltageB << "," << endl;
-    stream << "Polarity," << (polarityA ? "-," : "+,") << (polarityB ? "-," : "+,") << endl;
+    stream << "Polarity," << (polarityA ? "+," : "-,") << (polarityB ? "+," : "-,") << endl;
     stream << "Sensitivity," << (sensitivityA ? "High," : "Low,") << (sensitivityB ? "High," : "Low,") << endl;
-
     stream << endl;
 
 }
@@ -182,20 +179,21 @@ void Logger::printReqularData(QFile *f)
 
     // заполнение строки
     stream <<
+              // common
               getTimeStringFile() << "," <<
               getDateStringFile() << "," <<
               QString::number(id) << "," <<
-
+              // channel A
               (hvEnabledA ? "Yes," : "No,") <<
               signalA << "," <<
               voltageA << "," <<
-              (polarityA ? "-," : "+,") <<
+              (polarityA ? "+," : "-,") <<
               (sensitivityA ? "High," : "Low,") <<
-
               (hvEnabledB ? "Yes," : "No,") <<
+              // channel B
               signalB << "," <<
               voltageB << "," <<
-              (polarityB ? "-," : "+,") <<
+              (polarityB ? "+," : "-,") <<
               (sensitivityB ? "High," : "Low,") <<
 
               temperature << "," << endl;
