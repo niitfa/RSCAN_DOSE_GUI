@@ -166,7 +166,7 @@ void WidgetSensitivity::watchdogDisable()
 
 void WidgetSensitivity::setupSensitivityButtons(bool sensitivity)
 {
-    if(sensitivity)
+    if(!sensitivity)
     {
         this->setLowButtonActive(true);
         this->setHighButtonActive(false);
@@ -182,7 +182,7 @@ void WidgetSensitivity::on_pushButton_sensitivityLow_clicked()
 {
     if(client)
     {
-        client->sendCommand(this->setSensitivityCode, 0);
+        client->sendCommand(this->setSensitivityCode, 1);
     }
 }
 
@@ -190,7 +190,7 @@ void WidgetSensitivity::on_pushButton_sensitivityHigh_clicked()
 {
     if(client)
     {
-        client->sendCommand(this->setSensitivityCode, 1);
+        client->sendCommand(this->setSensitivityCode, 0);
     }
 }
 
@@ -231,7 +231,6 @@ void WidgetSensitivity::setActiveStyle(QPushButton *button)
                 "QPushButton:hover { background-color: rgb(230,230,230);  }"
                 // pressed
                 "QPushButton:pressed { background-color: rgb(200,200,200);  }"
-
                 // disabled
                 "QPushButton:disabled { border-width:0px;  }"
                 "QPushButton:disabled { background-color: rgb(255,255,255);  }"
