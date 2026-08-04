@@ -56,6 +56,7 @@ void WidgetADC::setupComboBoxOptions()
     ui->comboBox_PGA->addItem("32");
     ui->comboBox_PGA->addItem("64");
     ui->comboBox_PGA->addItem("128");
+    ui->comboBox_PGA->setCurrentIndex(0);
 
     //DR
     ui->comboBox_DR->addItem("5");
@@ -68,6 +69,7 @@ void WidgetADC::setupComboBoxOptions()
     ui->comboBox_DR->addItem("640");
     ui->comboBox_DR->addItem("1000");
     ui->comboBox_DR->addItem("2000");
+    ui->comboBox_DR->setCurrentIndex(2);
 }
 
 void WidgetADC::setupFont()
@@ -103,15 +105,15 @@ void WidgetADC::on_comboBox_DR_activated(const QString &arg1)
 {
     if(client)
     {
-        if(arg1 == "5") client->sendCommand(setPGA_code, 0b0000);
-        if(arg1 == "10") client->sendCommand(setPGA_code, 0b0001);
-        if(arg1 == "20") client->sendCommand(setPGA_code, 0b0010);
-        if(arg1 == "40") client->sendCommand(setPGA_code, 0b0011);
-        if(arg1 == "80") client->sendCommand(setPGA_code, 0b0100);
-        if(arg1 == "160") client->sendCommand(setPGA_code, 0b0101);
-        if(arg1 == "320") client->sendCommand(setPGA_code, 0b0110);
-        if(arg1 == "640") client->sendCommand(setPGA_code, 0b0111);
-        if(arg1 == "1000") client->sendCommand(setPGA_code, 0b1000);
-        if(arg1 == "2000") client->sendCommand(setPGA_code, 0b1001);
+        if(arg1 == "5") client->sendCommand(setDR_code, 0b0000);
+        if(arg1 == "10") client->sendCommand(setDR_code, 0b0001);
+        if(arg1 == "20") client->sendCommand(setDR_code, 0b0010);
+        if(arg1 == "40") client->sendCommand(setDR_code, 0b0011);
+        if(arg1 == "80") client->sendCommand(setDR_code, 0b0100);
+        if(arg1 == "160") client->sendCommand(setDR_code, 0b0101);
+        if(arg1 == "320") client->sendCommand(setDR_code, 0b0110);
+        if(arg1 == "640") client->sendCommand(setDR_code, 0b0111);
+        if(arg1 == "1000") client->sendCommand(setDR_code, 0b1000);
+        if(arg1 == "2000") client->sendCommand(setDR_code, 0b1001);
     }
 }
