@@ -8,16 +8,21 @@
 enum RSCANDoseCommandCode
 {
     Empty = 0x00000000l,
-    Enable_HV_A,
-	Enable_HV_B,
-	Disable_HV_A,
-	Disable_HV_B,
-	Set_Voltage_A,
-	Set_Voltage_B,
-	Set_HV_Polarity_A,
-	Set_HV_Polarity_B,
-	Set_Sensitivity_A,
-	Set_Sensitivity_B
+    Enable_HV_A = 0x01,
+    Enable_HV_B = 0x02,
+    Disable_HV_A = 0x03,
+    Disable_HV_B = 0x04,
+    Set_Voltage_A = 0x05,
+    Set_Voltage_B = 0x06,
+    Set_HV_Polarity_A = 0x07,
+    Set_HV_Polarity_B = 0x08,
+    Set_Sensitivity_A = 0x09,
+    Set_Sensitivity_B = 0x0A,
+
+    Set_ADC_DR_A = 0x40,
+    Set_ADC_DR_B = 0x41,
+    Set_ADC_Gain_A = 0x42,
+    Set_ADC_Gain_B = 0x43
 };
 
 // value list and sequence as it is in MCU program
@@ -36,6 +41,8 @@ enum RSCANDoseValueCode
 	HV_Polarity_B,
     HV_Enabled_A,
     HV_Enabled_B,
+    Version_Major,
+    Version_Minor,
 	Size 
 };
 

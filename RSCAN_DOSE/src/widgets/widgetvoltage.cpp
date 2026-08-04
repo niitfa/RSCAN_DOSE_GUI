@@ -11,7 +11,7 @@ WidgetVoltage::WidgetVoltage(QWidget *parent) :
     // ui setup
     drawValueFrame();
     drawPolarityFrame();
-    drawExternalFrame();
+    //drawExternalFrame();
     drawHeadIcons();
     drawHeadTexts();
     setupFont();

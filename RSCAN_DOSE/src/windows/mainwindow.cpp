@@ -23,8 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setupDisplayWidgets();
     setupSignalWidgets();
     setupLoggerWidget();
+    setupADCWidgets();
     setupTimer();
-
     disableMainWindow();
 }
 
@@ -40,14 +40,16 @@ void MainWindow::enableMainWindow()
     ui->widget_voltageA->setEnabled(1);
     ui->widget_voltageDisplayA->setEnabled(1);
     ui->widget_signalA->setEnabled(1);
+    ui->widget_adcA->setEnabled(1);
     // channel B
     ui->widget_sensitivityB->setEnabled(1);
     ui->widget_voltageB->setEnabled(1);
     ui->widget_voltageDisplayB->setEnabled(1);
     ui->widget_signalB->setEnabled(1);
+    ui->widget_adcB->setEnabled(1);
     // labels
-    ui->widget_headA->setEnabled(1);
-    ui->widget_headB->setEnabled(1);
+    //ui->widget_headA->setEnabled(1);
+    //ui->widget_headB->setEnabled(1);
     // other
     ui->widget_temperatureDisplay->setEnabled(1);
     ui->widget_file->setEnabled(1);
@@ -63,14 +65,16 @@ void MainWindow::disableMainWindow()
     ui->widget_voltageA->setDisabled(1);
     ui->widget_voltageDisplayA->setDisabled(1);
     ui->widget_signalA->setDisabled(1);
+    ui->widget_adcA->setDisabled(1);
     // channel B
     ui->widget_sensitivityB->setDisabled(1);
     ui->widget_voltageB->setDisabled(1);
     ui->widget_voltageDisplayB->setDisabled(1);
     ui->widget_signalB->setDisabled(1);
+    ui->widget_adcB->setDisabled(1);
     // labels
-    ui->widget_headA->setDisabled(1);
-    ui->widget_headB->setDisabled(1);
+    //ui->widget_headA->setDisabled(1);
+    //ui->widget_headB->setDisabled(1);
     // other
     ui->widget_temperatureDisplay->setDisabled(1);
     ui->widget_file->setDisabled(1);
@@ -237,7 +241,7 @@ void MainWindow::setupDisplayWidgets()
     // channel B voltage display
     ui->widget_voltageDisplayB->setHeadText("Напряжение (B), В:");
     // temperature
-    ui->widget_temperatureDisplay->setHeadText("Температура, ℃:");
+    ui->widget_temperatureDisplay->setHeadText("Темп., ℃:");
 }
 
 void MainWindow::setupSignalWidgets()
@@ -259,6 +263,21 @@ void MainWindow::setupLoggerWidget()
 
     std::function<void(void)> startLoggingCallback (std::bind(&MainWindow::updateLoggerData, this));
     ui->widget_file->setStartLoggingCallback(startLoggingCallback);
+}
+
+void MainWindow::setupADCWidgets()
+{
+    ui->widget_adcA->setLabelText("Усиление (A):", "Частота (A):");
+    ui->widget_adcA->setTCPClient(client);
+    ui->widget_adcA->setCommandCodes(
+                RSCANDoseCommandCode::Set_ADC_DR_A, RSCANDoseCommandCode::Set_ADC_Gain_A
+                );
+
+    ui->widget_adcB->setLabelText("Усиление (B):", "Частота (B):");
+    ui->widget_adcB->setTCPClient(client);
+    ui->widget_adcB->setCommandCodes(
+                RSCANDoseCommandCode::Set_ADC_DR_B, RSCANDoseCommandCode::Set_ADC_Gain_B
+                );
 }
 
 void MainWindow::setupTimer()
@@ -306,8 +325,8 @@ void MainWindow::updateLoggerData()
 
 void MainWindow::setupChannelLabels()
 {
-    ui->widget_headA->setText("A");
-    ui->widget_headB->setText("B");
+    //ui->widget_headA->setText("A");
+    //ui->widget_headB->setText("B");
 }
 
 void MainWindow::on_pushButton_settings_clicked()

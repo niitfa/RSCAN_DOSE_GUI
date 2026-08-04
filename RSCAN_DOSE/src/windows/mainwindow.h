@@ -46,6 +46,7 @@ private:
     void setupDisplayWidgets();
     void setupSignalWidgets();
     void setupLoggerWidget();
+    void setupADCWidgets();
     void setupTimer();
 
 private:

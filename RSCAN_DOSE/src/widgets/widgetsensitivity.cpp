@@ -8,7 +8,7 @@ WidgetSensitivity::WidgetSensitivity(QWidget *parent) :
     ui->setupUi(this);
 
     drawInternalFrame();
-    drawExternalFrame();
+    //drawExternalFrame();
     drawIcon();
     drawHeadText();
     setupButtonsStyle();

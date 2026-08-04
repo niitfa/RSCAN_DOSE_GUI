@@ -20,6 +20,8 @@ RSCANDoseClient::RSCANDoseClient(std::string ip, uint16_t port)
     map[RSCANDoseValueCode::HV_Polarity_B] = {31, 1};
     map[RSCANDoseValueCode::HV_Enabled_A] = {32, 1};
     map[RSCANDoseValueCode::HV_Enabled_B] = {33, 1};
+    map[RSCANDoseValueCode::Version_Major] = {62, 1};
+    map[RSCANDoseValueCode::Version_Minor] = {63, 1};
 }
 
 RSCANDoseClient::~RSCANDoseClient()

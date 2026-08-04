@@ -20,7 +20,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     ui->frame_borderInternal->setLayout(ui->horizontalLayout_borderInternal);
 
     // external frame
-    ui->frame_borderExternal->setStyleSheet(
+    /*ui->frame_borderExternal->setStyleSheet(
                 " QFrame { background-color: rgb(230,230,230); } "
                 " QFrame { border-radius:15px; }"
                 " QFrame { border-style: outset; }"
@@ -29,7 +29,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
                 );
 
     ui->verticalLayout_borderExternal->setParent(nullptr);
-    ui->frame_borderExternal->setLayout(ui->verticalLayout_borderExternal);
+    ui->frame_borderExternal->setLayout(ui->verticalLayout_borderExternal); */
 
     // icon
     int headIconSize = 24;
