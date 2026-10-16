@@ -34,7 +34,7 @@ public:
     void updateLoggerData();
 
 private slots:
-    void updateGraph();
+    void updateWindow();
     void on_pushButton_settings_clicked();
 private:
     void setupClient();
@@ -58,6 +58,9 @@ private:
     int id = 0;
     int graphInterval_ms = 5;
     QTimer* graphTimer = new QTimer();
+private:
+    double kA();
+    double kB();
 };
 
 #endif // MAINWINDOW_H

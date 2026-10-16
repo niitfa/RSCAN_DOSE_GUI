@@ -88,9 +88,9 @@ void MainWindow::updateWindowData()
     if(client)
     {
         // signal A
-        ui->widget_signalA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_A)));
+        ui->widget_signalA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_A) * kA()) );
         // signal B
-        ui->widget_signalB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_B)));
+        ui->widget_signalB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_B) * kB()));
         // voltage A
         ui->widget_voltageDisplayA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_A)));
         // voltage B
@@ -107,7 +107,6 @@ void MainWindow::updateWindowData()
     }
 }
 
-#include <iostream>
 void MainWindow::showGraph(int graphNo, bool flag)
 {
     ui->widget_graph->setLineVisible(graphNo, flag);
@@ -123,17 +122,18 @@ void MainWindow::showGraphB(bool flag)
     showGraph(1, flag);
 }
 
-void MainWindow::updateGraph()
+void MainWindow::updateWindow()
 {
     int msgNum = client->readValue(RSCANDoseValueCode::Message_Num);
     if(msgNum != id)
     {
         id = msgNum;
         QVector<double> data{
-            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_A) ),
-            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_B) )
+            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_A) * kA() ),
+            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_B) * kB() )
          };
         ui->widget_graph->pushData(data);
+        updateWindowData();
     }
 }
 
@@ -146,8 +146,8 @@ void MainWindow::setupClient()
     client->setIP(ip);
     client->setPort(port);
     client->setVerbose(true);
-    std::function<void()> msgRecvCallback(std::bind(&MainWindow::updateWindowData, this));
-    client->setMessageReceivedCallback(msgRecvCallback);
+    //std::function<void()> msgRecvCallback(std::bind(&MainWindow::updateWindowData, this));
+    //client->setMessageReceivedCallback(msgRecvCallback);
 }
 
 void MainWindow::setupSettingsButton()
@@ -237,9 +237,9 @@ void MainWindow::setupSensitivityWidgets()
 void MainWindow::setupDisplayWidgets()
 {
     // channel A voltage display
-    ui->widget_voltageDisplayA->setHeadText("Напряжение (А), В:");
+    ui->widget_voltageDisplayA->setHeadText("Напряжение (1), В:");
     // channel B voltage display
-    ui->widget_voltageDisplayB->setHeadText("Напряжение (B), В:");
+    ui->widget_voltageDisplayB->setHeadText("Напряжение (2), В:");
     // temperature
     ui->widget_temperatureDisplay->setHeadText("Темп., ℃:");
 }
@@ -249,10 +249,10 @@ void MainWindow::setupSignalWidgets()
     std::function<void(bool)> showGraphACallback(std::bind(&MainWindow::showGraphA, this, std::placeholders::_1));
     std::function<void(bool)> showGraphBCallback(std::bind(&MainWindow::showGraphB, this, std::placeholders::_1));
 
-    ui->widget_signalA->setHeadText("Сигнал (A), ед:");
+    ui->widget_signalA->setHeadText("Ток (1), пА:");
     ui->widget_signalA->setCheckedCallback(showGraphACallback);
     ui->widget_signalA->setChecked(true);
-    ui->widget_signalB->setHeadText("Сигнал (B), ед:");
+    ui->widget_signalB->setHeadText("Ток (2), пА:");
     ui->widget_signalB->setCheckedCallback(showGraphBCallback);
     ui->widget_signalB->setChecked(true);
 }
@@ -267,13 +267,13 @@ void MainWindow::setupLoggerWidget()
 
 void MainWindow::setupADCWidgets()
 {
-    ui->widget_adcA->setLabelText("Усиление (A):", "Частота (A):");
+    ui->widget_adcA->setLabelText("Усиление (1):", "Частота (1):");
     ui->widget_adcA->setTCPClient(client);
     ui->widget_adcA->setCommandCodes(
                 RSCANDoseCommandCode::Set_ADC_DR_A, RSCANDoseCommandCode::Set_ADC_Gain_A
                 );
 
-    ui->widget_adcB->setLabelText("Усиление (B):", "Частота (B):");
+    ui->widget_adcB->setLabelText("Усиление (2):", "Частота (2):");
     ui->widget_adcB->setTCPClient(client);
     ui->widget_adcB->setCommandCodes(
                 RSCANDoseCommandCode::Set_ADC_DR_B, RSCANDoseCommandCode::Set_ADC_Gain_B
@@ -284,7 +284,37 @@ void MainWindow::setupTimer()
 {
     graphTimer->setSingleShot(false);
     graphTimer->setInterval(this->graphInterval_ms);
-    QObject::connect(graphTimer, SIGNAL(timeout()), this, SLOT(updateGraph()));
+    QObject::connect(graphTimer, SIGNAL(timeout()), this, SLOT(updateWindow()));
+}
+
+double MainWindow::kA()
+{
+    double res = 1;
+    int sensitivity = client->readValue(RSCANDoseValueCode::Sensitivity_A);
+    if(sensitivity == static_cast<int>(RSCANDoseSensitivity::Low))
+    {
+        res = Settings::get(Settings::Key::K_A_Low, Settings::Section::Main).toDouble();
+    }
+    else if (sensitivity == static_cast<int>(RSCANDoseSensitivity::High))
+    {
+        res = Settings::get(Settings::Key::K_A_High, Settings::Section::Main).toDouble();
+    }
+    return res * 1e+12;
+}
+
+double MainWindow::kB()
+{
+    double res = 1;
+    int sensitivity = client->readValue(RSCANDoseValueCode::Sensitivity_B);
+    if(sensitivity == static_cast<int>(RSCANDoseSensitivity::Low))
+    {
+        res = Settings::get(Settings::Key::K_B_Low, Settings::Section::Main).toDouble();
+    }
+    else if (sensitivity == static_cast<int>(RSCANDoseSensitivity::High))
+    {
+        res = Settings::get(Settings::Key::K_B_High, Settings::Section::Main).toDouble();
+    }
+    return res * 1e+12;
 }
 
 void MainWindow::updateLoggerData()
@@ -295,6 +325,11 @@ void MainWindow::updateLoggerData()
         logger->setSignals(
                     client->readValue(RSCANDoseValueCode::Dose_A),
                     client->readValue(RSCANDoseValueCode::Dose_B)
+                    );
+
+        logger->setCurrents(
+                    client->readValue(RSCANDoseValueCode::Dose_A) * kA(),
+                    client->readValue(RSCANDoseValueCode::Dose_B) * kB()
                     );
         logger->setVoltages(
                     client->readValue(RSCANDoseValueCode::HV_A),

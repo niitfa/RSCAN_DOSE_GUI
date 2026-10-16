@@ -169,12 +169,12 @@ void QGraph::setupGraph()
     this->QCustomPlot::addGraph();
     pen.setColor(colors[0]);
     this->QCustomPlot::graph(0)->setPen(pen);
-    this->QCustomPlot::graph(0)->setName("Канал A");
+    this->QCustomPlot::graph(0)->setName("Канал 1");
 
     this->QCustomPlot::addGraph();
     pen.setColor(colors[1]);
     this->QCustomPlot::graph(1)->setPen(pen);
-    this->QCustomPlot::graph(1)->setName("Канал B");
+    this->QCustomPlot::graph(1)->setName("Канал 2");
 
 
 }
@@ -217,7 +217,7 @@ void QGraph::setupStyles()
     // labels
     this->QCustomPlot::xAxis->setLabel("Время, c");
     this->QCustomPlot::xAxis->setLabelFont(font);
-    this->QCustomPlot::yAxis->setLabel("Сигнал, ед.");
+    this->QCustomPlot::yAxis->setLabel("Ток, пА");
     this->QCustomPlot::yAxis->setLabelFont(font);
 
     // background

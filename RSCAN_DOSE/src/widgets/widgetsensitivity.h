@@ -53,15 +53,13 @@ private:
 private:
     Ui::WidgetSensitivity *ui;
     QFont buttonsFont;
-    uint8_t lastSensitivity = 1; // 0 - low, 1 - high
+    uint8_t lastSensitivity = static_cast<uint8_t>(RSCANDoseSensitivity::High);
     RSCANDoseClient* client = nullptr;
-
     // command code
     RSCANDoseCommandCode setSensitivityCode = RSCANDoseCommandCode::Empty;
     // value code
     RSCANDoseValueCode getSensitivityCode = RSCANDoseValueCode::Message_Num;
-
-    bool previousSensitivity = false;
+    uint8_t previousSensitivity = static_cast<uint8_t>(RSCANDoseSensitivity::Low);
     QTimer* timer = nullptr;
     int wdInterval_ms = 500;
 

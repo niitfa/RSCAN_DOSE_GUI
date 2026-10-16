@@ -70,7 +70,7 @@
      <item>
       <widget class="QLabel" name="label_minSignal">
        <property name="text">
-        <string>Мин, ед:</string>
+        <string>Мин, пА:</string>
        </property>
       </widget>
      </item>
@@ -96,7 +96,7 @@
      <item>
       <widget class="QLabel" name="label_maxSignal">
        <property name="text">
-        <string>Макс, ед:</string>
+        <string>Макс, пА:</string>
        </property>
       </widget>
      </item>

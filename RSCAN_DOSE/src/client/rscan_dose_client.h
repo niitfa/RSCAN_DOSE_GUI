@@ -4,6 +4,12 @@
 #include "tcp_client.h"
 #include <vector>
 
+enum class RSCANDoseSensitivity
+{
+    Low = 1,
+    High = 0
+};
+
 // command list and sequence as it is in MCU program
 enum RSCANDoseCommandCode
 {

@@ -4,6 +4,8 @@
 #include <QtMath>
 #include <QTextStream>
 #include <iostream>
+#include "rscan_dose_client.h"
+#include "settings.h"
 
 Logger::Logger()
 {
@@ -67,6 +69,12 @@ void Logger::setSignals(int A, int B)
 {
     signalA = A;
     signalB = B;
+}
+
+void Logger::setCurrents(double A, double B)
+{
+    currentA = A;
+    currentB = B;
 }
 
 void Logger::setVoltages(int A, int B)
@@ -151,6 +159,15 @@ QString Logger::QStringFromInt(int num, int numMinimumLength)
 
 void Logger::printHeadText(QFile* f)
 {
+    // sensitivity A
+    QString sensitivityA_str;
+    if(sensitivityA == static_cast<uint8_t>(RSCANDoseSensitivity::Low)) sensitivityA_str = "Low,";
+    if(sensitivityA == static_cast<uint8_t>(RSCANDoseSensitivity::High)) sensitivityA_str = "High,";
+    // sensitivity B
+    QString sensitivityB_str;
+    if(sensitivityB == static_cast<uint8_t>(RSCANDoseSensitivity::Low)) sensitivityB_str = "Low,";
+    if(sensitivityB == static_cast<uint8_t>(RSCANDoseSensitivity::High)) sensitivityB_str = "High,";
+
     QTextStream stream(f);
     stream << "Date," <<  getDateStringFile() << endl;
     stream << "Time," <<  getTimeStringFile() << endl;
@@ -159,7 +176,15 @@ void Logger::printHeadText(QFile* f)
     stream << "Enabled," << (hvEnabledA ? "Yes," : "No,") << (hvEnabledB ? "Yes," : "No,")<< endl;
     stream << "Voltage (V)," << voltageA << "," <<  voltageB << "," << endl;
     stream << "Polarity," << (polarityA ? "+," : "-,") << (polarityB ? "+," : "-,") << endl;
-    stream << "Sensitivity," << (sensitivityA ? "High," : "Low,") << (sensitivityB ? "High," : "Low,") << endl;
+    stream << "Sensitivity," << sensitivityA_str << sensitivityB_str << endl;
+    stream << "k Low (A/count),"
+           << Settings::get(Settings::Key::K_A_Low, Settings::Section::Main).toString() + ","
+           << Settings::get(Settings::Key::K_B_Low, Settings::Section::Main).toString() + ","
+           << endl;
+    stream << "k High (A/count),"
+           << Settings::get(Settings::Key::K_A_High, Settings::Section::Main).toString() + ","
+           << Settings::get(Settings::Key::K_B_High, Settings::Section::Main).toString() + ","
+           << endl;
     stream << endl;
 
 }
@@ -167,15 +192,25 @@ void Logger::printHeadText(QFile* f)
 void Logger::printValuesDescription(QFile *f)
 {
     QTextStream stream(f);
-    stream << "Time," << "Date," << "ID," << "Enabled A," << "Signal A," << "Voltage A (V)," << "Polarity A," << "Sensitivity A,"
-                                          << "Enabled B," << "Signal B," << "Voltage B (V)," << "Polarity B," << "Sensitivity B,"
+    stream << "Time," << "Date," << "ID," << "Enabled A," << "Signal A," << "Current A (pA)," << "Voltage A (V)," << "Polarity A," << "Sensitivity A,"
+                                          << "Enabled B," << "Signal B," << "Current A (pA)," << "Voltage B (V)," << "Polarity B," << "Sensitivity B,"
                                           << "Temperature (℃)";
     stream << endl;
 }
 
+#include <iostream>
 void Logger::printReqularData(QFile *f)
 {
     QTextStream stream(f);
+
+    // sensitivity A
+    QString sensitivityA_str;
+    if(sensitivityA == static_cast<uint8_t>(RSCANDoseSensitivity::Low)) sensitivityA_str = "Low,";
+    if(sensitivityA == static_cast<uint8_t>(RSCANDoseSensitivity::High)) sensitivityA_str = "High,";
+    // sensitivity B
+    QString sensitivityB_str;
+    if(sensitivityB == static_cast<uint8_t>(RSCANDoseSensitivity::Low)) sensitivityB_str = "Low,";
+    if(sensitivityB == static_cast<uint8_t>(RSCANDoseSensitivity::High)) sensitivityB_str = "High,";
 
     // заполнение строки
     stream <<
@@ -186,16 +221,17 @@ void Logger::printReqularData(QFile *f)
               // channel A
               (hvEnabledA ? "Yes," : "No,") <<
               signalA << "," <<
+              currentA << "," <<
               voltageA << "," <<
               (polarityA ? "+," : "-,") <<
-              (sensitivityA ? "High," : "Low,") <<
+              sensitivityA_str <<
               (hvEnabledB ? "Yes," : "No,") <<
               // channel B
               signalB << "," <<
+              currentB << "," <<
               voltageB << "," <<
               (polarityB ? "+," : "-,") <<
-              (sensitivityB ? "High," : "Low,") <<
-
+              sensitivityB_str <<
               temperature << "," << endl;
 }
 

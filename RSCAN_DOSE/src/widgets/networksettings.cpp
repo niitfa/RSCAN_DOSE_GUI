@@ -13,8 +13,6 @@ NetworkSettings::NetworkSettings(QWidget *parent) :
     ui->setupUi(this);
     this->underlineTitle();
     this->showAll();
-
-
 }
 
 NetworkSettings::~NetworkSettings()

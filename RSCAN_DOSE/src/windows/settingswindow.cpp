@@ -9,20 +9,27 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Настройки");
-    setFixedSize(400, 250);
+    setFixedSize(500, 500);
 
     this->networkWidget = new NetworkSettings(this);
+    this->sensitivityWidget = new SensitivitySettings(this);
 
     /* add network widget */
     if(this->networkWidget)
     {
         this->addCustomWidget(this->networkWidget);
     }
+
+    if(this->sensitivityWidget)
+    {
+        this->addCustomWidget(this->sensitivityWidget);
+    }
 }
 
 SettingsWindow::~SettingsWindow()
 {
     delete networkWidget;
+    delete sensitivityWidget;
     delete ui;
 }
 
@@ -32,6 +39,10 @@ void SettingsWindow::show()
     if(this->networkWidget)
     {
         this->networkWidget->show();
+    }
+    if(this->sensitivityWidget)
+    {
+        this->sensitivityWidget->show();
     }
 
     this->printStatus(QString());
@@ -64,6 +75,10 @@ void SettingsWindow::on_pushButton_apply_clicked()
     if(this->networkWidget)
     {
         this->networkWidget->applySettings();
+    }
+    if(this->sensitivityWidget)
+    {
+        this->sensitivityWidget->applySettings();
     }
 
     this->printStatus(QString("Настройки сохранены."));

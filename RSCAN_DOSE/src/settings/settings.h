@@ -54,6 +54,10 @@ public:
     enum Key{
         IP,
         Port,
+        K_A_Low,
+        K_A_High,
+        K_B_Low,
+        K_B_High
     };
 
     class ValueRef{

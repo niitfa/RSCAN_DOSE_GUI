@@ -62,8 +62,8 @@ private:
     // graph
     QGraph* graph = nullptr;
     bool graphStarted = true;
-    double yGraphMaxRange = 9e+6; // was 9000000
-    double yGraphMinRange = -1e+6;
+    double yGraphMaxRange = 10000; // was 9000000
+    double yGraphMinRange = -1000;
     double tGraphRange = 20;
 };
 

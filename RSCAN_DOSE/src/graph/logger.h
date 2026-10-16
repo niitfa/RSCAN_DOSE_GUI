@@ -17,6 +17,8 @@ class Logger
     uint32_t  id = 0;
     int signalA = 0;
     int signalB = 0;
+    double currentA = 0;
+    double currentB = 0;
     int voltageA = 0;
     int voltageB = 0;
     int polarityA = 0;
@@ -42,6 +44,7 @@ public:
     // regular
     void setID(uint32_t id);
     void setSignals(int A, int B);
+    void setCurrents(double A, double B);
     void setVoltages(int A, int B);
     void setPolarities(int A, int B);
     void setSensitivities(int A, int B);

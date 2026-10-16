@@ -257,7 +257,6 @@ void WidgetGraph::setupTexts()
     ui->lineEdit_graphMin->setFont(buttonsFont);
     ui->lineEdit_time->setFont(buttonsFont);
 
-
     QFont font;
     font.setFamily("Inter");
     font.setPixelSize(24);

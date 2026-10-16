@@ -166,12 +166,12 @@ void WidgetSensitivity::watchdogDisable()
 
 void WidgetSensitivity::setupSensitivityButtons(bool sensitivity)
 {
-    if(!sensitivity)
+    if(sensitivity == static_cast<uint8_t>(RSCANDoseSensitivity::High))
     {
         this->setLowButtonActive(true);
         this->setHighButtonActive(false);
     }
-    else
+    else if(sensitivity == static_cast<uint8_t>(RSCANDoseSensitivity::Low))
     {
         this->setLowButtonActive(false);
         this->setHighButtonActive(true);
@@ -182,7 +182,7 @@ void WidgetSensitivity::on_pushButton_sensitivityLow_clicked()
 {
     if(client)
     {
-        client->sendCommand(this->setSensitivityCode, 1);
+        client->sendCommand(this->setSensitivityCode, static_cast<uint8_t>(RSCANDoseSensitivity::Low));
     }
 }
 
@@ -190,7 +190,7 @@ void WidgetSensitivity::on_pushButton_sensitivityHigh_clicked()
 {
     if(client)
     {
-        client->sendCommand(this->setSensitivityCode, 0);
+        client->sendCommand(this->setSensitivityCode, static_cast<uint8_t>(RSCANDoseSensitivity::High));
     }
 }
 
