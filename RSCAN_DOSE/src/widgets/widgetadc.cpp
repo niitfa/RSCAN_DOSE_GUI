@@ -43,6 +43,8 @@ void WidgetADC::setLabelText(QString labelPGA, QString labelDR)
 {
     ui->label_PGA->setText(labelPGA);
     ui->label_DR->setText(labelDR);
+
+
 }
 
 void WidgetADC::setupComboBoxOptions()
@@ -76,7 +78,6 @@ void WidgetADC::setupFont()
     headFont.setFamily("Inter");
     headFont.setPixelSize(16);
     headFont.setWeight(55);
-
     ui->label_DR->setFont(headFont);
     ui->label_PGA->setFont(headFont);
     ui->comboBox_DR->setFont(headFont);

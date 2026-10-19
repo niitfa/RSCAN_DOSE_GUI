@@ -26,7 +26,7 @@
      <item>
       <widget class="QLabel" name="label_k_A_low">
        <property name="text">
-        <string>Канал A (низк.)</string>
+        <string>Канал 1 (низк.)</string>
        </property>
       </widget>
      </item>
@@ -78,7 +78,7 @@
      <item>
       <widget class="QLabel" name="label_k_A_high">
        <property name="text">
-        <string>Канал A (высок.)</string>
+        <string>Канал 1 (высок.)</string>
        </property>
       </widget>
      </item>
@@ -130,7 +130,7 @@
      <item>
       <widget class="QLabel" name="label_k_B_low">
        <property name="text">
-        <string>Канал B (низк.)</string>
+        <string>Канал 2 (низк.)</string>
        </property>
       </widget>
      </item>
@@ -182,7 +182,7 @@
      <item>
       <widget class="QLabel" name="label_k_B_high">
        <property name="text">
-        <string>Канал B (высок.)</string>
+        <string>Канал 2 (высок.)</string>
        </property>
       </widget>
      </item>

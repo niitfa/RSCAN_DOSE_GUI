@@ -10,6 +10,11 @@ enum class RSCANDoseSensitivity
     High = 0
 };
 
+enum class RSCANDoseVoltagePolarity {
+    Negative = 0,
+    Positive = 1
+};
+
 // command list and sequence as it is in MCU program
 enum RSCANDoseCommandCode
 {
