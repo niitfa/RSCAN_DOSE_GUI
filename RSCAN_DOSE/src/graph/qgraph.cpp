@@ -150,7 +150,7 @@ void QGraph::setupGraph()
     QPen pen;
     QVector<QColor> colors = QVector<QColor>({
                     QColor(0x00, 0x66, 0x00), // 0:0
-                    QColor(0x00, 0x66, 0xCC), // 0:1
+                    QColor(0xEE, 0x00, 0x00), // 0:1
                });
 
     /*for(int i = 0; i < this->numberOfGraphs; i++)
