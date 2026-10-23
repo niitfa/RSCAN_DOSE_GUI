@@ -50,12 +50,14 @@ void QGraph::update(const QVector<double>& data)
 {
     if(this->enabled)
     {
+        /*
         // get current timе
         int msecs_elapsed = timer.restart();
         double secs_elapsed = static_cast<double>(msecs_elapsed) / 1000;
         this->updateTimeVector(secs_elapsed);
         this->yVecPushBack(data);
 
+        // move t scale futher
         while(this->isLimitTimeExceeded())
         {
             tMin += secs_elapsed;
@@ -64,6 +66,22 @@ void QGraph::update(const QVector<double>& data)
             this->yVecPopFront();
             this->setTAxisRange(tMin, tMax);
         }
+        */
+
+        // ---------------------------------------
+
+        int msecs_elapsed = timer.restart();
+        double secs_elapsed = static_cast<double>(msecs_elapsed) / 1000;
+        if(this->isLimitTimeExceeded())
+        {
+            resetData(tMax);
+            this->updateTimeVector(tMin);
+        }
+        else
+        {
+           this->updateTimeVector(secs_elapsed);
+        }
+        this->yVecPushBack(data);
         this->QGraph::replot();
     }
 }
@@ -104,19 +122,23 @@ void QGraph::updateTimeVector(double t)
 bool QGraph::isLimitTimeExceeded()
 {
     double limitTime = this->tMin + this->tFilled * (this->tMax - this->tMin);
+    if(tVec.empty())
+    {
+        return false;
+    }
     return this->tVec.back() > limitTime;
 }
 
-void QGraph::setEnabled(bool enabled)
+void QGraph::setEnabled(bool en)
 {
-    if(enabled)
+    if(en)
     {
         if(!this->enabled)
         {
             this->resetData();
         }
     }
-    this->enabled = enabled;
+    this->enabled = en;
 }
 
 double QGraph::getTimeRange()
@@ -134,13 +156,13 @@ double QGraph::getYMin()
     return this->yMin;
 }
 
-void QGraph::resetData()
+void QGraph::resetData(double tStart)
 {
     this->tVec.clear();
     this->yVecClear();
     double tAxisRange = this->tMax - this->tMin;
-    this->tMin = 0;
-    this->tMax = tAxisRange;
+    this->tMin = tStart;
+    this->tMax = this->tMin + tAxisRange;
     timer.restart();
     this->setTAxisRange(tMin, tMax);
 }
@@ -153,17 +175,6 @@ void QGraph::setupGraph()
                     QColor(0xEE, 0x00, 0x00), // 0:1
                });
 
-    /*for(int i = 0; i < this->numberOfGraphs; i++)
-    {
-        this->QCustomPlot::addGraph();
-        pen.setColor(colors[i]);
-        pen.setWidth(3);
-        this->QCustomPlot::graph(i)->setPen(pen);
-        this->QCustomPlot::graph(i)->setName(
-                    QString::number(i / 4) + ":" + QString::number(i % 4)
-                    );
-    } */
-
     pen.setWidth(3);
 
     this->QCustomPlot::addGraph();
@@ -175,8 +186,6 @@ void QGraph::setupGraph()
     pen.setColor(colors[1]);
     this->QCustomPlot::graph(1)->setPen(pen);
     this->QCustomPlot::graph(1)->setName("Канал 2");
-
-
 }
 
 void QGraph::removeGraph()
@@ -305,7 +314,69 @@ void QGraph::hideAllGraphs()
     this->updateLegend();
 }
 
-//#include <iostream>
+bool QGraph::isGraphVisible(int index)
+{
+    if(index >= 0 && index < numberOfGraphs)
+    {
+        QCPGraph* g = this->QCustomPlot::graph(index);
+        if(g)
+        {
+            return g->visible();
+        }
+    }
+    return false;
+}
+
+double QGraph::getGraphAverageData(int index)
+{
+    double average = 0;
+    if(index >= 0 && index < numberOfGraphs)
+    {
+        if(!yVec[index].empty())
+        {
+            for(auto val : yVec[index])
+            {
+                average += val / yVec[index].size();
+            }
+        }
+    }
+    return average;
+}
+
+double QGraph::getGraphMaxData(int index)
+{
+    double max = 0;
+    if(index >= 0 && index < numberOfGraphs)
+    {
+        if(!yVec[index].empty())
+        {
+            max = yVec[index][0];
+            for(auto val : yVec[index])
+            {
+                (val > max) ? max = val : 0;
+            }
+        }
+    }
+    return max;
+}
+
+double QGraph::getGraphMinData(int index)
+{
+    double min = 0;
+    if(index >= 0 && index < numberOfGraphs)
+    {
+        if(!yVec[index].empty())
+        {
+            min = yVec[index][0];
+            for(auto val : yVec[index])
+            {
+                (val < min) ? min = val : 0;
+            }
+        }
+    }
+    return min;
+}
+
 void QGraph::showPointToolTip(QMouseEvent * event)
 {
     Q_UNUSED(event);

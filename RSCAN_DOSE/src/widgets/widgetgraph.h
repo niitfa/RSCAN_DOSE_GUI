@@ -26,7 +26,6 @@ public:
     // graph management
     void setLineVisible(int lineNo, bool visible);
     void pushData(const QVector<double> &);
-
 private slots:
     void on_pushButton_startGraph_clicked();
 
@@ -35,6 +34,12 @@ private slots:
     void on_lineEdit_graphMax_editingFinished();
 
     void on_lineEdit_time_editingFinished();
+    void on_pushButton_center_clicked();
+
+    void on_pushButton_zoomIn_clicked();
+
+    void on_pushButton_zoomOut_clicked();
+
 private:
     // construstor wrappers
     void setupStartButton();
@@ -50,6 +55,8 @@ private:
     void startGraph();
     void stopGraph();
 
+    void zoom(double k);
+
     void resizeEvent(QResizeEvent *) override;
 private:
     Ui::WidgetGraph *ui;
@@ -58,12 +65,15 @@ private:
     QString enabledColorText;
     QString disabledColorText;
     QFont buttonsFont;
-
     // graph
     QGraph* graph = nullptr;
     bool graphStarted = true;
     double yGraphMaxRange = 10000; // was 9000000
     double yGraphMinRange = -1000;
+
+    static constexpr double yGraphUpperLimit = 1e+9;
+    static constexpr double yGraphLowerLimit = -1e+9;
+
     double tGraphRange = 20;
 };
 

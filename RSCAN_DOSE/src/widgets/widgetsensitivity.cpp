@@ -118,7 +118,7 @@ void WidgetSensitivity::drawHeadText()
 {
     QFont headFont;
     headFont.setFamily("Inter");
-    headFont.setPixelSize(16);
+    headFont.setPixelSize(15);
     headFont.setWeight(50);
 
 
@@ -135,7 +135,7 @@ void WidgetSensitivity::drawHeadText()
 void WidgetSensitivity::setupButtonsStyle()
 {
     buttonsFont.setFamily("Inter");
-    buttonsFont.setPixelSize(15);
+    buttonsFont.setPixelSize(14);
     buttonsFont.setWeight(50);
 
     ui->pushButton_sensitivityLow->setFont(buttonsFont);

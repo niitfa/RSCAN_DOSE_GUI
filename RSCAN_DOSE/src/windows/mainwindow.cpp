@@ -88,9 +88,12 @@ void MainWindow::updateWindowData()
     if(client)
     {
         // signal A
-        ui->widget_signalA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_A) * kA()) );
+        //ui->widget_signalA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_A) * kA()) );
+
+        if(averageSignalA) { ui->widget_signalA->setValueText(QString::number(averageSignalA->getAverage())); }
         // signal B
-        ui->widget_signalB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_B) * kB()));
+        //ui->widget_signalB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_B) * kB()));
+        if(averageSignalB) { ui->widget_signalB->setValueText(QString::number(averageSignalB->getAverage())); }
         // voltage A
         ui->widget_voltageDisplayA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_A)));
         // voltage B
@@ -128,9 +131,21 @@ void MainWindow::updateWindow()
     if(msgNum != id)
     {
         id = msgNum;
+        double dataA = 0;
+        double dataB = 0;
+        if(averageSignalA)
+        {
+           averageSignalA->addElement( static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_A) * kA() ));
+           dataA = averageSignalA->getAverage();
+        }
+        if(averageSignalB)
+        {
+           averageSignalB->addElement( static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_B) * kB() ));
+           dataB = averageSignalB->getAverage();
+        }
         QVector<double> data{
-            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_A) * kA() ),
-            static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_B) * kB() )
+            dataA,
+            dataB
          };
         ui->widget_graph->pushData(data);
         updateWindowData();
@@ -146,8 +161,6 @@ void MainWindow::setupClient()
     client->setIP(ip);
     client->setPort(port);
     client->setVerbose(true);
-    //std::function<void()> msgRecvCallback(std::bind(&MainWindow::updateWindowData, this));
-    //client->setMessageReceivedCallback(msgRecvCallback);
 }
 
 void MainWindow::setupSettingsButton()
@@ -242,6 +255,7 @@ void MainWindow::setupDisplayWidgets()
     ui->widget_voltageDisplayB->setHeadText("Напряжение (2), В:");
     // temperature
     ui->widget_temperatureDisplay->setHeadText("Темп., ℃:");
+    ui->widget_temperatureDisplay->hide();
 }
 
 void MainWindow::setupSignalWidgets()
@@ -252,9 +266,11 @@ void MainWindow::setupSignalWidgets()
     ui->widget_signalA->setHeadText("Ток (1), пА:");
     ui->widget_signalA->setCheckedCallback(showGraphACallback);
     ui->widget_signalA->setChecked(true);
+    ui->widget_signalA->setMovingAverage(averageSignalA);
     ui->widget_signalB->setHeadText("Ток (2), пА:");
     ui->widget_signalB->setCheckedCallback(showGraphBCallback);
     ui->widget_signalB->setChecked(true);
+    ui->widget_signalB->setMovingAverage(averageSignalB);
 }
 
 void MainWindow::setupLoggerWidget()
@@ -360,8 +376,6 @@ void MainWindow::updateLoggerData()
 
 void MainWindow::setupChannelLabels()
 {
-    //ui->widget_headA->setText("A");
-    //ui->widget_headB->setText("B");
 }
 
 void MainWindow::on_pushButton_settings_clicked()

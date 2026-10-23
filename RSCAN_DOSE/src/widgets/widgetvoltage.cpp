@@ -93,7 +93,7 @@ void WidgetVoltage::drawHeadTexts()
 {
     QFont headFont;
     headFont.setFamily("Inter");
-    headFont.setPixelSize(16);
+    headFont.setPixelSize(15);
     headFont.setWeight(50);
 
     QString headTextColor = "color: rgb(70,70,70);";
@@ -118,7 +118,7 @@ void WidgetVoltage::drawHeadTexts()
 void WidgetVoltage::setupFont()
 {
     this->buttonsFont.setFamily("Inter");
-    this->buttonsFont.setPixelSize(15);
+    this->buttonsFont.setPixelSize(14);
     this->buttonsFont.setWeight(50);
 }
 

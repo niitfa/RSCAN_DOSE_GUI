@@ -7,30 +7,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // internal frame voltage value
-    ui->frame_borderInternal->setStyleSheet(
-                " QFrame { background-color: rgb(247,247,247); } "
-                " QFrame { border-radius:10px; }"
-                " QFrame { border-style: outset; }"
-                " QFrame { border-width:1px; }"
-                " QFrame { border-color:rgb(150,150,150); }"
-                );
-
-    ui->horizontalLayout_borderInternal->setParent(nullptr);
-    ui->frame_borderInternal->setLayout(ui->horizontalLayout_borderInternal);
-
-    // external frame
-    /*ui->frame_borderExternal->setStyleSheet(
-                " QFrame { background-color: rgb(230,230,230); } "
-                " QFrame { border-radius:15px; }"
-                " QFrame { border-style: outset; }"
-                " QFrame { border-width:1px; }"
-                " QFrame { border-color:rgb(150,150,150); }"
-                );
-
-    ui->verticalLayout_borderExternal->setParent(nullptr);
-    ui->frame_borderExternal->setLayout(ui->verticalLayout_borderExternal); */
-
     // icon
     int headIconSize = 24;
     QIcon headIcon(":/img/icon_file.png");
@@ -43,7 +19,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     // head text
     QFont headFont;
     headFont.setFamily("Inter");
-    headFont.setPixelSize(16);
+    headFont.setPixelSize(15);
     headFont.setWeight(50);
 
     QString headTextColor = "color: rgb(70,70,70);";
@@ -53,11 +29,11 @@ WidgetFile::WidgetFile(QWidget *parent) :
                 headTextColor
                 );
     ui->label_headText->setFont(headFont);
-    ui->label_headText->setText("Сохранение сессии");
+    ui->label_headText->setText("Файл");
 
     // buttons
     buttonsFont.setFamily("Inter");
-    buttonsFont.setPixelSize(15);
+    buttonsFont.setPixelSize(14);
     buttonsFont.setWeight(50);
 
     // label poriod
@@ -132,7 +108,7 @@ void WidgetFile::on_lineEdit_periodInput_editingFinished()
 void WidgetFile::setStartStyle(QPushButton *button)
 {
     QIcon icon(":/img/button_icon_start.png");
-    int iconSize = 16;
+    int iconSize = 14;
     button->setIcon(icon);
     button->setIconSize(QSize(iconSize,iconSize));
     button->setFont(buttonsFont);

@@ -28,10 +28,49 @@ void WidgetADC::setCommandCodes(RSCANDoseCommandCode setDR_code, RSCANDoseComman
 
 void WidgetADC::setEnabled(bool en)
 {
+    QWidget::setEnabled(en);
     ui->label_DR->setEnabled(en);
     ui->label_PGA->setEnabled(en);
     ui->comboBox_DR->setEnabled(en);
     ui->comboBox_PGA->setEnabled(en);
+    if(en)
+    {
+        ui->label_DR->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+        );
+        ui->label_PGA->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+        );
+        ui->comboBox_DR->setStyleSheet(
+                    "border-width:0px;" +
+                    this->enabledColorText
+                );
+        ui->comboBox_PGA->setStyleSheet(
+                    "border-width:0px;" +
+                    this->enabledColorText
+                );
+    }
+    else
+    {
+        ui->label_DR->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+        );
+        ui->label_PGA->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+        );
+        ui->comboBox_DR->setStyleSheet(
+                    "border-width:0px;" +
+                    this->disabledColorText
+                );
+        ui->comboBox_PGA->setStyleSheet(
+                    "border-width:0px;" +
+                    this->disabledColorText
+                );
+    }
 }
 
 void WidgetADC::setDisabled(bool dis)
@@ -43,8 +82,6 @@ void WidgetADC::setLabelText(QString labelPGA, QString labelDR)
 {
     ui->label_PGA->setText(labelPGA);
     ui->label_DR->setText(labelDR);
-
-
 }
 
 void WidgetADC::setupComboBoxOptions()
@@ -76,12 +113,15 @@ void WidgetADC::setupFont()
 {
     QFont headFont;
     headFont.setFamily("Inter");
-    headFont.setPixelSize(16);
-    headFont.setWeight(55);
+    headFont.setPixelSize(13);
+    headFont.setWeight(60);
     ui->label_DR->setFont(headFont);
     ui->label_PGA->setFont(headFont);
     ui->comboBox_DR->setFont(headFont);
     ui->comboBox_PGA->setFont(headFont);
+
+    this->enabledColorText =  "color: rgb(50,70,100);";
+    this->disabledColorText = "color: rgb(130,130,130);";
 }
 
 #include <iostream>

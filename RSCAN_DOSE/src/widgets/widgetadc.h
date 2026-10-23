@@ -35,6 +35,8 @@ private:
     RSCANDoseClient* client = nullptr;
     RSCANDoseCommandCode setDR_code = RSCANDoseCommandCode::Empty;
     RSCANDoseCommandCode setPGA_code = RSCANDoseCommandCode::Empty;
+    QString enabledColorText;
+    QString disabledColorText;
 };
 
 #endif // WIDGETADC_H

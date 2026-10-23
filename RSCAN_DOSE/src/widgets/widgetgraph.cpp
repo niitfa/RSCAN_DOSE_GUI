@@ -71,7 +71,7 @@ void WidgetGraph::pushData(const QVector<double> &data)
 void WidgetGraph::setStartStyle(QPushButton * button, QString text)
 {
     QIcon icon(":/img/button_icon_start.png");
-    int iconSize = 14;
+    int iconSize = 12;
     button->setIcon(icon);
     button->setIconSize(QSize(iconSize,iconSize));
     button->setFont(buttonsFont);
@@ -100,7 +100,7 @@ void WidgetGraph::setStartStyle(QPushButton * button, QString text)
 void WidgetGraph::setStopStyle(QPushButton * button, QString text)
 {
     QIcon icon(":/img/button_icon_pause.png");
-    int iconSize = 24;
+    int iconSize = 20;
     button->setIcon(icon);
     button->setIconSize(QSize(iconSize,iconSize));
     button->setFont(buttonsFont);
@@ -135,6 +135,10 @@ void WidgetGraph::setEnabledTextColor(bool enabled)
     ui->lineEdit_graphMax->setStyleSheet("border-width:0px;" + color);
     ui->lineEdit_graphMin->setStyleSheet("border-width:0px;" + color);
     ui->lineEdit_time->setStyleSheet("border-width:0px;" + color);
+
+    ui->pushButton_center->setStyleSheet("border-width:0px;" + color);
+    ui->pushButton_zoomIn->setStyleSheet("border-width:0px;" + color);
+    ui->pushButton_zoomOut->setStyleSheet("border-width:0px;" + color);
 }
 
 void WidgetGraph::startGraph()
@@ -155,6 +159,19 @@ void WidgetGraph::stopGraph()
         this->setStartStyle(ui->pushButton_startGraph, graphButtonStartText);
         ui->lineEdit_time->setEnabled(1);
     }
+}
+
+void WidgetGraph::zoom(double k)
+{
+    double center = (graph->getYMax() + graph->getYMin()) / 2;
+    double width = (graph->getYMax() - graph->getYMin());
+
+    double newMax = center + (width / 2) * k;
+    double newMin = center - (width / 2) * k;
+
+    ui->lineEdit_graphMax->setText(QString::number(newMax));
+    ui->lineEdit_graphMin->setText(QString::number(newMin));
+    graph->setYAxisRange(newMin, newMax);
 }
 
 void WidgetGraph::resizeEvent(QResizeEvent *event)
@@ -241,7 +258,7 @@ void WidgetGraph::setupStartButton()
 void WidgetGraph::setupFont()
 {
     buttonsFont.setFamily("Inter");
-    buttonsFont.setPixelSize(15);
+    buttonsFont.setPixelSize(14);
     buttonsFont.setWeight(50);
 
     this->enabledColorText =  "color: rgb(50,70,100);";
@@ -256,6 +273,10 @@ void WidgetGraph::setupTexts()
     ui->lineEdit_graphMax->setFont(buttonsFont);
     ui->lineEdit_graphMin->setFont(buttonsFont);
     ui->lineEdit_time->setFont(buttonsFont);
+
+    ui->pushButton_center->setFont(buttonsFont);
+    ui->pushButton_zoomIn->setFont(buttonsFont);
+    ui->pushButton_zoomOut->setFont(buttonsFont);
 
     QFont font;
     font.setFamily("Inter");
@@ -289,4 +310,41 @@ void WidgetGraph::setupLineEdits()
     ui->lineEdit_graphMax->setText(QString::number(this->yGraphMaxRange));
     ui->lineEdit_graphMin->setText(QString::number(this->yGraphMinRange));
     ui->lineEdit_time->setText(QString::number(this->tGraphRange));
+}
+
+void WidgetGraph::on_pushButton_center_clicked()
+{
+    // выбрать канал
+    double kRange = 5; // [0, +inf)
+    int index = 0;
+    if(!graph->isGraphVisible(0) && graph->isGraphVisible(1))
+    {
+        index = 1;
+    }
+    // найти центр
+    double min = graph->getGraphMinData(index);
+    double max = graph->getGraphMaxData(index);
+    // найти разброс
+    if((max - min) >= 0)
+    {
+        double extraRange = (max - min) * (kRange) / 2 + 0.01;
+        max = max + extraRange;
+        (max > yGraphUpperLimit) ? (max = yGraphUpperLimit) : 0;
+        min = min - extraRange;
+        (min < yGraphLowerLimit) ? (min = yGraphLowerLimit) : 0;
+        // установить диапазон по у
+        ui->lineEdit_graphMax->setText(QString::number(max));
+        ui->lineEdit_graphMin->setText(QString::number(min));
+        graph->setYAxisRange(min, max);
+    }
+}
+
+void WidgetGraph::on_pushButton_zoomIn_clicked()
+{
+    zoom(0.8);
+}
+
+void WidgetGraph::on_pushButton_zoomOut_clicked()
+{
+    zoom(1.25);
 }

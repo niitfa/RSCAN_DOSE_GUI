@@ -1,5 +1,6 @@
 #include "widgetvaluechecked.h"
 #include "ui_widgetvaluechecked.h"
+#include "movingaverage.h"
 
 WidgetValueChecked::WidgetValueChecked(QWidget *parent) :
     QWidget(parent),
@@ -12,12 +13,12 @@ WidgetValueChecked::WidgetValueChecked(QWidget *parent) :
 
     QFont headFont;
     headFont.setFamily("Inter");
-    headFont.setPixelSize(16);
+    headFont.setPixelSize(15);
     headFont.setWeight(55);
 
     QFont valueFont;
     valueFont.setFamily("Inter");
-    valueFont.setPixelSize(30); // 28
+    valueFont.setPixelSize(25); // 28
     valueFont.setWeight(60);
     
         // border
@@ -42,9 +43,15 @@ WidgetValueChecked::WidgetValueChecked(QWidget *parent) :
     ui->label_head->setFont(headFont);
     // value text
     ui->label_value->setFont(valueFont);
-    // check box text
+    // label count
+    ui->label_count->setFont(headFont);
+    // check box graph text
     ui->checkBox->setFont(headFont);
     ui->checkBox->setText("График");
+
+    ui->checkBox_averaging->setFont(headFont);
+    ui->checkBox_averaging->setText("Усредн.");
+
     // init style
     this->WidgetValueChecked::setEnabled(true);
     
@@ -76,6 +83,15 @@ void WidgetValueChecked::setChecked(bool checked)
     checkedCallback(checked);
 }
 
+void WidgetValueChecked::setMovingAverage(MovingAverage *av)
+{
+    this->average = av;
+    if(average)
+    {
+        ui->lineEdit_averagingLevel->setText(QString::number(average->getAveragingLevel()));
+    }
+}
+
 void WidgetValueChecked::setEnabled(bool enabled)
 {
     QWidget::setEnabled(enabled);
@@ -89,7 +105,19 @@ void WidgetValueChecked::setEnabled(bool enabled)
             "border-width:0px;" +
             this->enabledColorText
         );
+        ui->label_count->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+        );
         ui->checkBox->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+        );
+        ui->checkBox_averaging->setStyleSheet(
+            "border-width:0px;" +
+            this->enabledColorText
+        );
+        ui->lineEdit_averagingLevel->setStyleSheet(
             "border-width:0px;" +
             this->enabledColorText
         );
@@ -104,7 +132,19 @@ void WidgetValueChecked::setEnabled(bool enabled)
             "border-width:0px;" +
             this->disabledColorText
         );
+        ui->label_count->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+        );
         ui->checkBox->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+        );
+        ui->checkBox_averaging->setStyleSheet(
+            "border-width:0px;" +
+            this->disabledColorText
+        );
+        ui->lineEdit_averagingLevel->setStyleSheet(
             "border-width:0px;" +
             this->disabledColorText
         );
@@ -119,4 +159,50 @@ void WidgetValueChecked::setDisabled(bool disabled)
 void WidgetValueChecked::on_checkBox_clicked()
 {
     checkedCallback(ui->checkBox->isChecked());
+}
+
+void WidgetValueChecked::on_checkBox_averaging_clicked()
+{
+    if(average)
+    {
+        if(ui->checkBox_averaging->isChecked())
+        {
+            average->setAveragingLevel( ui->lineEdit_averagingLevel->text().toInt() );
+        }
+        else
+        {
+            average->setAveragingLevel(1);
+        }
+    }
+}
+
+void WidgetValueChecked::on_lineEdit_averagingLevel_editingFinished()
+{
+    bool ok = false;
+    int averagingLevel = ui->lineEdit_averagingLevel->text().toInt(&ok);
+    if(ok)
+    {
+        if(averagingLevel < 1)
+        {
+            averagingLevel = 1;
+            ui->lineEdit_averagingLevel->setText(QString::number(averagingLevel));
+        }
+        if(average && (averagingLevel >= average->maxSize))
+        {
+            averagingLevel = average->maxSize;
+            ui->lineEdit_averagingLevel->setText(QString::number(averagingLevel));
+        }
+        if(average && ui->checkBox_averaging->isChecked())
+        {
+            average->setAveragingLevel(averagingLevel);
+        }
+    }
+    else
+    {
+        if(average)
+        {
+            ui->lineEdit_averagingLevel->setText(QString::number(average->getAveragingLevel()));
+        }
+    }
+
 }

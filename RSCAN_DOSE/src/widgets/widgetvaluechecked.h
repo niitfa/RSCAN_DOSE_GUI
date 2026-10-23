@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <functional>
+#include "movingaverage.h"
 
 namespace Ui {
 class WidgetValueChecked;
@@ -20,6 +21,7 @@ public:
     void setValueText(QString qstr);
     void setCheckedCallback(std::function<void(bool)> cb);
     void setChecked(bool);
+    void setMovingAverage( MovingAverage* );
 
     // override
     void setEnabled(bool);
@@ -28,11 +30,16 @@ public:
 private slots:
     void on_checkBox_clicked();
 
+    void on_checkBox_averaging_clicked();
+
+    void on_lineEdit_averagingLevel_editingFinished();
+
 private:
     Ui::WidgetValueChecked *ui;
     QString enabledColorText;
     QString disabledColorText;
     std::function<void(bool)> checkedCallback = [](bool){};
+    MovingAverage* average = nullptr;
 
 };
 

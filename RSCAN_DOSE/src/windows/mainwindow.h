@@ -1,10 +1,21 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+// Изменения
+// 1) (есть) скользящее среднее
+// 2) измерение и вычитание фона
+// 3) (есть) обновление графика
+// 4) измерение интегрального заряда
+// 5) (есть) автоцентр
+// 6) (есть) зум +/-
+// 7) подгонка напряжения
+// 8) Настройка коэффициента A/ед а зависимости от gain АЦП
+
 #include <QMainWindow>
 #include <QTimer>
 #include "rscan_dose_client.h"
 #include "settingswindow.h"
+#include "movingaverage.h"
 
 namespace Ui {
 class MainWindow;
@@ -53,6 +64,8 @@ private:
     Ui::MainWindow *ui;
     RSCANDoseClient* client = nullptr;
     SettingsWindow* settingsWindow = new SettingsWindow(this);
+    MovingAverage* averageSignalA = new MovingAverage();
+    MovingAverage* averageSignalB = new MovingAverage();
 
     // graph update management
     int id = 0;

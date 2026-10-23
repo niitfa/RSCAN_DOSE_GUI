@@ -37,6 +37,11 @@ public:
     void hideGraph(int index);
     void showAllGraphs();
     void hideAllGraphs();
+    bool isGraphVisible(int index);
+
+    double getGraphAverageData(int index);
+    double getGraphMaxData(int index);
+    double getGraphMinData(int index);
 
     static const int numberOfGraphs = 2;
 private:
@@ -50,7 +55,7 @@ private:
     QVector<double> tVec;
 
     // t axis
-    double tFilled = 0.85; // (0, 1]
+    double tFilled = 1; // (0, 1]
     double tMin = 0;
     double tMax = 1;
 
@@ -60,7 +65,7 @@ private:
 private:
     void updateTimeVector(double t);
     bool isLimitTimeExceeded();
-    void resetData();
+    void resetData(double tStart = 0);
     void setupGraph();
     void removeGraph();
     void replot();
@@ -74,8 +79,6 @@ private:
 
     // legend
     void updateLegend();
-
-    // thread
 private slots:
     void showPointToolTip(QMouseEvent*);
 };
