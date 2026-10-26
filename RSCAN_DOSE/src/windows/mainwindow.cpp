@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupLoggerWidget();
     setupADCWidgets();
     setupTimer();
+    setupTabWidgets();
     disableMainWindow();
 }
 
@@ -54,6 +55,9 @@ void MainWindow::enableMainWindow()
     ui->widget_temperatureDisplay->setEnabled(1);
     ui->widget_file->setEnabled(1);
     ui->widget_graph->setEnabled(1);
+    // tab
+    ui->tabWidget_A->setEnabled(1);
+    ui->tabWidget_B->setEnabled(1);
     // timer
     graphTimer->start();
 }
@@ -79,6 +83,9 @@ void MainWindow::disableMainWindow()
     ui->widget_temperatureDisplay->setDisabled(1);
     ui->widget_file->setDisabled(1);
     ui->widget_graph->setDisabled(1);
+    // tab
+    ui->tabWidget_A->setDisabled(1);
+    ui->tabWidget_B->setDisabled(1);
     // timer
     graphTimer->stop();
 }
@@ -100,6 +107,9 @@ void MainWindow::updateWindowData()
         ui->widget_voltageDisplayB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_B)));
         // temperature
         ui->widget_temperatureDisplay->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Temp_A)));
+        // background
+        widgetBackgroundA->update();
+        widgetBackgroundB->update();
 
         if(ui->widget_file->getLogger())
         {
@@ -301,6 +311,31 @@ void MainWindow::setupTimer()
     graphTimer->setSingleShot(false);
     graphTimer->setInterval(this->graphInterval_ms);
     QObject::connect(graphTimer, SIGNAL(timeout()), this, SLOT(updateWindow()));
+}
+
+void MainWindow::setupTabWidgets()
+{
+    // A
+    widgetBackgroundA->setClient(client);
+    widgetChargeA->setClient(client);
+
+    ui->tabWidget_A->clear();
+    ui->tabWidget_A->addTab(widgetChargeA, QIcon(), "Заряд (1)");
+    ui->tabWidget_A->addTab(widgetBackgroundA, QIcon(), "Фон (1)");
+
+    widgetBackgroundA->init();
+    widgetChargeA->init();
+
+    // B
+    widgetBackgroundB->setClient(client);
+    widgetChargeB->setClient(client);
+
+    ui->tabWidget_B->clear();
+    ui->tabWidget_B->addTab(widgetChargeB, QIcon(), "Заряд (2)");
+    ui->tabWidget_B->addTab(widgetBackgroundB, QIcon(), "Фон (2)");
+
+    widgetBackgroundB->init();
+    widgetChargeB->init();
 }
 
 double MainWindow::kA()

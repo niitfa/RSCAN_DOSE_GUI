@@ -17,6 +17,9 @@
 #include "settingswindow.h"
 #include "movingaverage.h"
 
+#include "widgetbackground.h"
+#include "widgetcharge.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -59,6 +62,7 @@ private:
     void setupLoggerWidget();
     void setupADCWidgets();
     void setupTimer();
+    void setupTabWidgets();
 
 private:
     Ui::MainWindow *ui;
@@ -66,6 +70,12 @@ private:
     SettingsWindow* settingsWindow = new SettingsWindow(this);
     MovingAverage* averageSignalA = new MovingAverage();
     MovingAverage* averageSignalB = new MovingAverage();
+
+    WidgetBackground* widgetBackgroundA = new WidgetBackground(nullptr);
+    WidgetBackground* widgetBackgroundB = new WidgetBackground(nullptr);
+
+    WidgetCharge* widgetChargeA = new WidgetCharge(nullptr);
+    WidgetCharge* widgetChargeB = new WidgetCharge(nullptr);
 
     // graph update management
     int id = 0;
