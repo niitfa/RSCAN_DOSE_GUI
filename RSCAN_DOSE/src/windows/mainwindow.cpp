@@ -95,12 +95,13 @@ void MainWindow::updateWindowData()
     if(client)
     {
         // signal A
-        //ui->widget_signalA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_A) * kA()) );
-
-        if(averageSignalA) { ui->widget_signalA->setValueText(QString::number(averageSignalA->getAverage())); }
+        double signalA = averageSignalA->getAverage();
+        signalA -= widgetBackgroundA->getBackgroundChecked();
+        if(averageSignalA) { ui->widget_signalA->setValueText(QString::number(signalA)); }
         // signal B
-        //ui->widget_signalB->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Dose_B) * kB()));
-        if(averageSignalB) { ui->widget_signalB->setValueText(QString::number(averageSignalB->getAverage())); }
+        double signalB = averageSignalA->getAverage();
+        signalB -= widgetBackgroundA->getBackgroundChecked();
+        if(averageSignalB) { ui->widget_signalB->setValueText(QString::number(signalB)); }
         // voltage A
         ui->widget_voltageDisplayA->setValueText(QString::number(client->readValue(RSCANDoseValueCode::HV_A)));
         // voltage B
@@ -108,7 +109,15 @@ void MainWindow::updateWindowData()
         // temperature
         ui->widget_temperatureDisplay->setValueText(QString::number(client->readValue(RSCANDoseValueCode::Temp_A)));
         // background
+        widgetBackgroundA->setCurrentCoeff(
+                    Settings::get(Settings::Key::K_A_Low, Settings::Section::Main).toDouble() * 1e+12,
+                    Settings::get(Settings::Key::K_A_High, Settings::Section::Main).toDouble() * 1e+12
+                    );
         widgetBackgroundA->update();
+        widgetBackgroundB->setCurrentCoeff(
+                    Settings::get(Settings::Key::K_B_Low, Settings::Section::Main).toDouble() * 1e+12,
+                    Settings::get(Settings::Key::K_B_High, Settings::Section::Main).toDouble() * 1e+12
+                    );
         widgetBackgroundB->update();
 
         if(ui->widget_file->getLogger())
@@ -147,11 +156,13 @@ void MainWindow::updateWindow()
         {
            averageSignalA->addElement( static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_A) * kA() ));
            dataA = averageSignalA->getAverage();
+           dataA -= widgetBackgroundA->getBackgroundChecked();
         }
         if(averageSignalB)
         {
            averageSignalB->addElement( static_cast<double>( client->readValue(RSCANDoseValueCode::Dose_B) * kB() ));
            dataB = averageSignalB->getAverage();
+           dataB -= widgetBackgroundB->getBackgroundChecked();
         }
         QVector<double> data{
             dataA,
@@ -317,10 +328,12 @@ void MainWindow::setupTabWidgets()
 {
     // A
     widgetBackgroundA->setClient(client);
+    widgetBackgroundA->setSensitivityValueCode(RSCANDoseValueCode::Sensitivity_A);
+    widgetBackgroundA->setDoseValueCode(RSCANDoseValueCode::Dose_A);
     widgetChargeA->setClient(client);
 
     ui->tabWidget_A->clear();
-    ui->tabWidget_A->addTab(widgetChargeA, QIcon(), "Заряд (1)");
+    //ui->tabWidget_A->addTab(widgetChargeA, QIcon(), "Заряд (1)");
     ui->tabWidget_A->addTab(widgetBackgroundA, QIcon(), "Фон (1)");
 
     widgetBackgroundA->init();
@@ -328,10 +341,12 @@ void MainWindow::setupTabWidgets()
 
     // B
     widgetBackgroundB->setClient(client);
+    widgetBackgroundB->setSensitivityValueCode(RSCANDoseValueCode::Sensitivity_B);
+    widgetBackgroundB->setDoseValueCode(RSCANDoseValueCode::Dose_B);
     widgetChargeB->setClient(client);
 
     ui->tabWidget_B->clear();
-    ui->tabWidget_B->addTab(widgetChargeB, QIcon(), "Заряд (2)");
+    //ui->tabWidget_B->addTab(widgetChargeB, QIcon(), "Заряд (2)");
     ui->tabWidget_B->addTab(widgetBackgroundB, QIcon(), "Фон (2)");
 
     widgetBackgroundB->init();
@@ -373,6 +388,12 @@ void MainWindow::updateLoggerData()
     Logger* logger = ui->widget_file->getLogger();
     if(logger && client)
     {
+        logger->setBackground(
+                    widgetBackgroundA->getBackground(RSCANDoseSensitivity::Low),
+                    widgetBackgroundA->getBackground(RSCANDoseSensitivity::High),
+                    widgetBackgroundB->getBackground(RSCANDoseSensitivity::Low),
+                    widgetBackgroundB->getBackground(RSCANDoseSensitivity::High)
+                    );
         logger->setSignals(
                     client->readValue(RSCANDoseValueCode::Dose_A),
                     client->readValue(RSCANDoseValueCode::Dose_B)

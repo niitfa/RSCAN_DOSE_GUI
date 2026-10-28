@@ -29,6 +29,11 @@ class Logger
     int hvEnabledB = 0;
     int temperature = 0;
 
+    double backgroundA_Low = 0;
+    double backgroundA_High = 0;
+    double backgroundB_Low = 0;
+    double backgroundB_High = 0;
+
     // other
     QString filename = "rscan_dose";
 public:
@@ -42,6 +47,7 @@ public:
     void setFilename(QString);
 
     // regular
+    void setBackground(double A_low, double A_high, double B_low, double B_high);
     void setID(uint32_t id);
     void setSignals(int A, int B);
     void setCurrents(double A, double B);

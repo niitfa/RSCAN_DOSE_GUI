@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include "rscan_dose_client.h"
+#include "weightedaverage.h"
 
 namespace Ui {
 class WidgetBackground;
@@ -18,7 +19,15 @@ public:
     ~WidgetBackground();
     void setClient(RSCANDoseClient*);
     void init();
+    void setSensitivityValueCode(RSCANDoseValueCode code);
+    void setDoseValueCode(RSCANDoseValueCode code);
     void update();
+    void setCurrentCoeff(double low, double high);
+    double getBackgroundChecked();
+    double getBackground(RSCANDoseSensitivity);
+
+    void setEnabled(bool);
+    void setDisabled(bool);
 
 private slots:
     void on_lineEdit_time_editingFinished();
@@ -28,10 +37,16 @@ private slots:
 private:
     Ui::WidgetBackground *ui;
     RSCANDoseClient* client = nullptr;
-    int measureTime_s = 60;
+    uint32_t measureTime_s = 60;
     uint32_t progressTime_us = 0;
+    WeightedAverage backgroundLow;
+    WeightedAverage backgroundHigh;
+    double kLow = 1;
+    double kHigh = 1;
     std::atomic<uint32_t> updatePeriodMicroseconds { 0 };
     std::chrono::_V2::system_clock::time_point startDuration;
+    RSCANDoseValueCode sensitivityCode = RSCANDoseValueCode::Sensitivity_A;
+    RSCANDoseValueCode doseCode = RSCANDoseValueCode::Dose_A;
 
     enum class BackgroundMeasureStatus{
         Standby,
@@ -41,15 +56,21 @@ private:
     BackgroundMeasureStatus status = BackgroundMeasureStatus::Standby;
 
 private:
-    void setMeasureTime(int time_s);
+    void setStyle();
+    void setMeasureTime(uint32_t time_s);
     void fillProgress();
     void resetProgress();
     void measureUpdateTime();
     void setStatus(BackgroundMeasureStatus s);
-
     void setStandbyButtonStyle(QPushButton*);
     void setProgressButtonStyle(QPushButton*);
 
+    void resetBackground(RSCANDoseSensitivity);
+    void printBackground(RSCANDoseSensitivity, double);
+    void updateBackground();
+
+    double getBackground();
+    bool backgroundSubstractionChecked();
 
 };
 

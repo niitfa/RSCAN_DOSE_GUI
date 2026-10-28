@@ -8,6 +8,9 @@
 #include <QString>
 #include "settings.h"
 
+#include "weightedaverage.h"
+#include <iostream>
+
 void setupConfig();
 
 int main(int argc, char *argv[])

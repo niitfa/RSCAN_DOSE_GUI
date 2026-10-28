@@ -60,6 +60,14 @@ void Logger::setFilename(QString filename)
     this->filename = filename;
 }
 
+void Logger::setBackground(double A_Low, double A_High, double B_Low, double B_High)
+{
+    backgroundA_Low = A_Low;
+    backgroundA_High = A_High;
+    backgroundB_Low = B_Low;
+    backgroundB_High = B_High;
+}
+
 void Logger::setID(uint32_t id)
 {
     this->id = id;
@@ -184,6 +192,14 @@ void Logger::printHeadText(QFile* f)
     stream << "k High (A/count),"
            << Settings::get(Settings::Key::K_A_High, Settings::Section::Main).toString() + ","
            << Settings::get(Settings::Key::K_B_High, Settings::Section::Main).toString() + ","
+           << endl;
+    stream << "Background Low (pA),"
+           << QString::number(backgroundA_Low) + ","
+           << QString::number(backgroundB_Low) + ","
+           << endl;
+    stream << "Background High (pA),"
+           << QString::number(backgroundA_High) + ","
+           << QString::number(backgroundB_High) + ","
            << endl;
     stream << endl;
 
