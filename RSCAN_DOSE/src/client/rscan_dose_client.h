@@ -52,6 +52,8 @@ enum RSCANDoseValueCode
 	HV_Polarity_B,
     HV_Enabled_A,
     HV_Enabled_B,
+    HV_Correction_State_A,
+    HV_Correction_State_B,
     Version_Major,
     Version_Minor,
 	Size 
