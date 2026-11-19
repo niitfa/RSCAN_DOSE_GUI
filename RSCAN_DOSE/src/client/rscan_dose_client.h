@@ -29,6 +29,10 @@ enum RSCANDoseCommandCode
     Set_HV_Polarity_B = 0x08,
     Set_Sensitivity_A = 0x09,
     Set_Sensitivity_B = 0x0A,
+    Set_K_HV_Positive_A = 0x0B,
+    Set_K_HV_Negative_A = 0x0C,
+    Set_K_HV_Positive_B = 0x0D,
+    Set_K_HV_Negative_B = 0x0E,
 
     Set_ADC_DR_A = 0x40,
     Set_ADC_DR_B = 0x41,
@@ -54,6 +58,10 @@ enum RSCANDoseValueCode
     HV_Enabled_B,
     HV_Correction_State_A,
     HV_Correction_State_B,
+    K_HV_Positive_A,
+    K_HV_Negative_A,
+    K_HV_Positive_B,
+    K_HV_Negative_B,
     Version_Major,
     Version_Minor,
 	Size 

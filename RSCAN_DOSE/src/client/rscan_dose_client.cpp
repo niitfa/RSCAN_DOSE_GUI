@@ -22,6 +22,10 @@ RSCANDoseClient::RSCANDoseClient(std::string ip, uint16_t port)
     map[RSCANDoseValueCode::HV_Enabled_B] = {33, 1};
     map[RSCANDoseValueCode::HV_Correction_State_A] = {34, 1};
     map[RSCANDoseValueCode::HV_Correction_State_B] = {35, 1};
+    map[RSCANDoseValueCode::K_HV_Positive_A] = {36, 2};
+    map[RSCANDoseValueCode::K_HV_Negative_A] = {38, 2};
+    map[RSCANDoseValueCode::K_HV_Positive_B] = {40, 2};
+    map[RSCANDoseValueCode::K_HV_Negative_B] = {42, 2};
     map[RSCANDoseValueCode::Version_Major] = {62, 1};
     map[RSCANDoseValueCode::Version_Minor] = {63, 1};
 }
